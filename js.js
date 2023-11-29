@@ -1,131 +1,119 @@
+// let ar = [100, 200, 300, 400];
+// let ar2 = new Array();
+
 let names = [
-    'Ivan', 
-    'Bogdan', 
+    'Ivan',
+    'Artem',
+    'Aleksey',
     'Ruslan',
     'Olga',
-    'Inna',
-    'Anna',
+    'Inna,Valentina',
 ];
-
-[first, second, third] = [...names];
-
 
 names[names.length] = 'David';
 
-
-
-// let newNames = [...names];
-
-// console.log(names, newNames);
-
-//Так никогда не делай!!!
-names[8] = 'Misha'; 
-names.someValue = 'some-value';
-
-// console.log(names);
-// let newNames = [...names];
-
-// console.log(newNames);
-
-//console.log(names[2]);
-//console.log(names[-1]);
-// console.log(names.at(-1));
-// console.log(names[names.length - 1]);
-
-// pop/push && shift/unshift
-
-//names.pop(3);
-
-names.push('Rita', 'Margo', 'Aleksey;Pavel');
-
-// names.length = names.length - 2;
-
-// console.log(names);
-
-// names.length = 10;
-
-// console.log(names);
-
-let newNames = Array.from(names);
-
-console.log(newNames);
-// let multi = [
-//     [1,2,3],
-//     [4,5,6],
-//     [7,8,9],
-// ];
-
-// console.log(multi[1][1]);
+// Так никогда не делай!
+// names[12] = 'Misha'; - создание дыры в массиве
+// names.someValue = 'SomeValues'; - создание посторонней переменной
+// let names2 = [...names]; - чиним так
 
 //console.log(names);
-let bigName = names.filter(name => name.length > 4);
 
-let bigName2 = names.filter(name => {
-    if(name.length > 5) return name;
-});
+//names[3]; // получение по ключу
 
-// console.log(bigName, bigName2);
+//console.log(names[names.length - 1]); // старый способ получения последнего элемента
 
-// bigName.fill('Petr');
-// bigName.fill('Ivan', 2, 4);
-// bigName.fill('Bogdan', 4, 100);
+// names[-1];
+//console.log(names.at(-1)); //новый метод получения последнего элемента
 
-// console.log(bigName);
+let matrix = [
+    [1,2,3],
+    [4,5,6],
+    [7,8,9]
+];
 
-//console.log(Array(100).fill('Bogdan'));
+//console.log(matrix[1][1]);
+// let str1 = names.join('; '); // JSON.stringify(names)
 
-// const ar = Array(4).fill({});
-// console.log(ar);
-// ar[0].hi = 'all';
-// console.log(ar);
+// console.log(str1);
 
-// let numbers = [1, 4, 9, 25, 3, 8, 10];
-// let roots = numbers.map(Math.sqrt);
-// let roots2 = numbers.map(num => {
-//     return Math.round(Math.sqrt(num)); 
-// });
+// let str2 = String(names);
 
-// console.log(numbers);
-// console.log(roots);
-// console.log(roots2);
+// console.log(str2);
 
-// bigName.fill('blabla1'); - заменить все элементы
-// bigName.fill('blabla2', 3); - заменить только 3 индекс
-// bigName.fill('blabla3', 4, 20); - заменить все начиная с 4 индекса и добавить недостающие до 20
-
-// let numbers = [1, 4, 9, 25, 3, 8, 10];
-// // let roots = numbers.map(Math.sqrt);
-
-// let ten = numbers.find(element => element > 10);
-
-// console.log(ten);
-
-// let indexTen = numbers.findIndex(element => element > 10);
-
-// console.log(indexTen);
-
-//.findLast()
-//.findLastIndex()
-
-// console.log(numbers);
-
-//console.log(numbers, roots, roots2);
-// console.log(names);
-
-// let str = names.join('||'); // JSON.stringify
-// console.log(str);
-
-// console.log(str.split('||')); //JSON.parse
-
-// console.log(String(numbers)); //Здесь сепаратор запятая
+// console.log(str1.split('; '));
+// console.log(str2.split(','));
 
 // console.log([] + 1);
 // console.log([1] + 1);
 // console.log([1,2] + 1);
-// console.log([1,2] + [3,4]);
+// console.log([1,2] + [2,4]);
 
 // console.log([...[1,2], ...[3,4]]);
 
-// Array.prototype.merge = function(...arr) {
+// console.log([1,2].concat([4,3]));
 
-// }
+// for ... in
+// for ... of
+// for(let i =);
+if(names instanceof Array)
+    names.forEach(item => {
+});
+
+// pop/push && shift/unshift
+//console.log(names);
+
+names.push('Rita', 'Margarita', 'Pavel');
+
+names.unshift('Sveta', 'Lada');
+
+// console.log(names);
+
+//names.length = 5;
+
+// console.log(names);
+
+//names.length = 12;
+
+//names.fill('Bpgdan'); - все заполнить
+//names.fill('Bogdan', 5); - c 5 строки
+//names.fill('Bogdan', 5, 8); - c 5 -8
+//names.fill('Bogdan', 5, 100);
+
+// let ar = Array(5).fill({});
+
+// ar[0].hi = 'All';
+
+// console.log(ar);
+
+// let names2 = names;
+// let names3 = [...names];
+
+let bigName = names.filter(name => name.length > 4);
+
+let someArray = [];
+names.forEach(name => {
+    if(name.length > 4)
+        someArray.push(name);
+});
+
+let nameA = names.find(name => name.length > 3); 
+//.findIndex
+//.findLastIndex
+//.findLast
+function someFunction(item) {
+    return item * 10;
+}
+
+let numbers = [1,4,9,25,3,8,10];
+
+let roots = numbers.map(item => {
+    let number = Math.sqrt(item);
+    return Math.round(number);
+});
+
+let roots2 = numbers.map(someFunction);
+
+console.log(numbers);
+console.log(roots);
+console.log(roots2);

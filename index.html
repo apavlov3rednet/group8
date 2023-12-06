@@ -10,7 +10,7 @@
     <div class="content">
         <h1>Single Page Application</h1>
 
-        <form action="" name="ADD_OWNER">
+        <form action="" name="ADD_OWNER" id="formOwner">
             <input type="text" name="NAME" placeholder="Имя">
             <input type="text" name="SECOND_NAME" placeholder="Отчество">
             <input type="text" name="LAST_NAME" placeholder="Фамилия">
@@ -21,7 +21,7 @@
     
         <br>
     
-        <form action="" name="ADD_CAR">
+        <form action="" name="ADD_CAR" id="formCar">
             <select name="OWNER" id="owner">
                 <option value="default">Выбери</option>
             </select>
@@ -54,8 +54,11 @@
         </form>
     </div>
     
+    <script src="/js/dom.js"></script>
+    <script src="/js/db.js"></script>
+    <script src="/js/model.js"></script>
 
-    <script src="script.js"></script>
-    <script src="js.js"></script>
+
+    <script src="/js/core.js"></script>
 </body>
 </html>

@@ -1,11 +1,13 @@
-import {DB} from '/db.js';
+//import {DB} from '/db.js';
 
-export class Model
+class Model
 {
     params = {};
+    id = Math.random(0,1000) * 1000; //автоматически создаваемый ключ
 
     constructor(params = {}) {
         this.params = {};
+        this.id = this.id;
 
         for(let i in params) {
             this.params[i] = params[i];
@@ -50,11 +52,11 @@ export class Model
 
 }
 
-let brand = new Model({brandName: 'Mersedes'});
-brand.set({country: 'Germany'});
-brand.send();
+// let brand = new Model({brandName: 'Mersedes'});
+// brand.set({country: 'Germany'});
+// brand.send();
 
-let idBrand = brand.filter({country: 'Germany'});
+// let idBrand = brand.filter({country: 'Germany'});
 
 // let model = new Model();
 // model.set({brand: idBrand, name: 'SLK'});

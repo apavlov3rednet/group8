@@ -1,4 +1,4 @@
-export class DOM {
+class DOM {
     static create(tagName, params = {}) {
         if(!tagName)
                 return false;
@@ -30,11 +30,17 @@ export class DOM {
                 }
             }
 
-            if(typeof params.children === 'object' && params.children instanceof Array) {
-                params.children.forEach(item => {
-                    element.append(item);
-                });
+            if(params.text || params.html) {
+                element.innerHTML = params.text || params.html;
             }
+            else {
+                if(typeof params.children === 'object' && params.children instanceof Array) {
+                    params.children.forEach(item => {
+                        element.append(item);
+                    });
+                }
+            }
+        
                 
             return element;
     }

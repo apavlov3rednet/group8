@@ -1,4 +1,4 @@
-export class DB {
+class DB {
     static #DBNAME = 'mongodb'; //имя базы
     static #LOCATION = 'mongodb://localhost'; //127.0.0.1
     static #PORT = 27017; //порт
@@ -7,7 +7,7 @@ export class DB {
  
     constructor() {}
 
-    initDb() {
+    static initDb() {
         /*
         const MongoClient = require(DB.#DBNAME).MongoClient;
         const url = [DB.#LOCATION, DB.#PORT].join(":"); //mongodb://localhost:12017
@@ -19,7 +19,7 @@ export class DB {
     }
 
     static setValue(key, value) {
-        this.initDb();
+        //this.initDb();
 
         if(!value || value === '' || typeof value === undefined) {
             this.removeValue(key);
@@ -32,7 +32,7 @@ export class DB {
 
     static removeValue(key) {
         if(confirm('Действительно удаляем?')) {
-            this.initDb();
+            //this.initDb();
 
             window.localStorage.removeItem(key);
     
@@ -41,7 +41,7 @@ export class DB {
     }
 
     static getValue(key) {
-        this.initDb();
+        //this.initDb();
 
         let value = window.localStorage.getItem(key);
 
@@ -54,7 +54,7 @@ export class DB {
         return value;
     }
 
-    isJson(value) {
+    static isJson(value) {
         try {
             JSON.parse(value);
         }

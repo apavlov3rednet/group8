@@ -41,7 +41,6 @@ class DOM {
                 }
             }
         
-                
             return element;
     }
 
@@ -71,10 +70,15 @@ class DOM {
             }
         }
 
-        if(typeof params.children === 'object' && params.children instanceof Array) {
-            params.children.forEach(item => {
-                element.append(item);
-            });
+        if(params.text || params.html) {
+            element.innerHTML = params.text || params.html;
+        }
+        else {
+            if(typeof params.children === 'object' && params.children instanceof Array) {
+                params.children.forEach(item => {
+                    element.append(item);
+                });
+            }
         }
     }
 

@@ -11,6 +11,7 @@
         <h1>Single Page Application</h1>
 
         <form action="" name="ADD_OWNER" id="formOwner">
+            <h2>Владелец</h2>
             <input type="text" name="NAME" placeholder="Имя">
             <input type="text" name="SECOND_NAME" placeholder="Отчество">
             <input type="text" name="LAST_NAME" placeholder="Фамилия">
@@ -20,8 +21,28 @@
         </form>
     
         <br>
+
+        <form action="" name="BRAND" id="formBrand">
+            <h2>Бренд</h2>
+            <input type="text" name="BRAND" placeholder="Введите название бренда">
+    
+            <button>Сохранить</button>
+        </form>
+    
+        <br>
+
+        <form action="" name="MODEL" id="formModel">
+            <h2>Модель</h2>
+            <select name="BRAND"></select>
+            <input type="text" name="NAME" placeholder="Введите название модели">
+    
+            <button>Сохранить</button>
+        </form>
+    
+        <br>
     
         <form action="" name="ADD_CAR" id="formCar">
+            <h2>Объект владельца</h2>
             <select name="OWNER" id="owner">
                 <option value="default">Выбери</option>
             </select>

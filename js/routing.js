@@ -85,12 +85,15 @@ class Routing
 
     getContent(id) {
         let url = this.arrObRoutes[id] || 'error';
+        const body = new URLSearchParams();
 
         if(url !== 'error') {
-            Routing.ajax(url, { type: 'async', method: 'POST', responseType: 'html'});
+            fetch(url, { type: 'async', method: 'POST', responseType: 'html', headers: {
+                'Access-Control-Allow-Origin': '*',
+            }, body}).then();
         }
         else {
-            Routing.ajax(this.arrObRoutes.error404);
+            fetch(this.arrObRoutes.error404).then();
         }
     }
 }

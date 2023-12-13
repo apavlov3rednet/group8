@@ -1,9 +1,16 @@
 (function() {
+    let r = new Routing();
+
+    r.tree();
+
+    console.log(r);
+
     //Объекты разметки
     let obOwnerForm = document.getElementById('formOwner');
     let obCarForm = document.getElementById('formCar');
     let obBrandForm = document.getElementById('formBrand');
     let obModelForm = document.getElementById('formModel');
+    let menu = document.body.querySelectorAll('menu li');
 
     //Селекты
     let selectOwner = obCarForm.querySelector('#owner');
@@ -77,6 +84,12 @@
             let newAr = arModel.filter(item => item.params.BRAND === value);
             updateOwnerList(selectModel, newAr);
         }
+    });
+
+    menu.forEach((item, index) => {
+        item.addEventListener('click', function() {
+            r.getContent(index);
+        });
     });
 
     //Навешивание событий на формы

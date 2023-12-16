@@ -1,8 +1,6 @@
 (function() {
     let r = new Routing();
-
-    r.tree();
-
+    let view = new View();
     console.log(r);
 
     //Объекты разметки
@@ -13,10 +11,10 @@
     let menu = document.body.querySelectorAll('menu li');
 
     //Селекты
-    let selectOwner = obCarForm.querySelector('#owner');
-    let selectBrands = obCarForm.querySelector('#brand');
-    let selectModelBrands = obModelForm.querySelector('[name=BRAND]');
-    let selectModel = obCarForm.querySelector('#model');
+    // let selectOwner = obCarForm.querySelector('#owner');
+    // let selectBrands = obCarForm.querySelector('#brand');
+    // let selectModelBrands = obModelForm.querySelector('[name=BRAND]');
+    // let selectModel = obCarForm.querySelector('#model');
 
     //База данных
     let arOwner = DB.getValue('owners') || []; //массив базы даных
@@ -75,32 +73,39 @@
         });
     }
 
-    selectBrands.addEventListener('change', function(event) {
-        event.preventDefault();
+    // selectBrands.addEventListener('change', function(event) {
+    //     event.preventDefault();
 
-        let value = selectBrands.value;
+    //     let value = selectBrands.value;
 
-        if(arModel.length > 0) {
-            let newAr = arModel.filter(item => item.params.BRAND === value);
-            updateOwnerList(selectModel, newAr);
-        }
-    });
+    //     if(arModel.length > 0) {
+    //         let newAr = arModel.filter(item => item.params.BRAND === value);
+    //         updateOwnerList(selectModel, newAr);
+    //     }
+    // });
 
+    r.tree(menu);
     menu.forEach((item, index) => {
         item.addEventListener('click', function() {
-            r.getContent(index);
+            r.getContent(index, {
+                routes: r.arRoute,
+                callback: view
+            });
         });
     });
 
+
+
     //Навешивание событий на формы
-    bindEvents(obOwnerForm, arOwner, 'owners', [selectOwner]);
-    bindEvents(obBrandForm, arBrands, 'brands', [selectBrands, selectModelBrands]);
-    bindEvents(obModelForm, arModel, 'models', [selectModel]);
+    //bindEvents(obOwnerForm, arOwner, 'owners', [selectOwner]);
+    // bindEvents(obBrandForm, arBrands, 'brands', [selectBrands, selectModelBrands]);
+    //bindEvents(obModelForm, arModel, 'models', [selectModel]);
 
     //Вызываем обновление селекта
-    updateOwnerList(selectOwner, arOwner, 'Выберите владельца');
-    updateOwnerList(selectBrands, arBrands);
-    updateOwnerList(selectModelBrands, arBrands);
-    updateOwnerList(selectModel, arModel);
+    //updateOwnerList(selectOwner, arOwner, 'Выберите владельца');
+    //updateOwnerList(selectBrands, arBrands);
+   // updateOwnerList(selectModelBrands, arBrands);
+   // updateOwnerList(selectModel, arModel);
+
 
 })(window);

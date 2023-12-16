@@ -2,10 +2,9 @@ class Routing
 {
     constructor() {
         this.viewsDir = '/views/';
-        this.arRoute = [];
+        this.arRoute = {};
         this.ext = '.tmpl';
         this.error404 = '404';
-        this.arrObRoutes = {};
     }
 
     /**
@@ -13,7 +12,7 @@ class Routing
      * @param {*} url important
      * @param {method = GET*|POST, type = sync*|async, reponseType = text} params options
      */
-    static ajax(url, params = {}) {
+    static ajaxOld(url, params = {}) {
         //Старт события XHR
         let xhr = new XMLHttpRequest();
 
@@ -69,32 +68,68 @@ class Routing
 
     }
 
-    tree() {
-        let menu = document.body.querySelectorAll('menu li');
+    static ajax(url, params = {}) {
+        let _this = this;
+        let content = fetch(url)
+            .then(response => {
+                return response.text();
+            })
+            .then(data => {
+                let route;
+                let view = new View();
+                
+                for(let i in params.routes) {
+                    if(params.routes[i].request === url) {
+                        route = params.routes[i];
+                    }
+                }
 
-        menu.forEach(item => {
-            this.arRoute.push(item.dataset.route);
-        });
+                _this.setUrl(route.url, route.name);
+                view.setContent(data);
 
-        this.arRoute.forEach((item, index) => {
-            this.arrObRoutes[index] = this.viewsDir + item + this.ext;
-        });
-
-        this.arrObRoutes['error'] = this.viewsDir + this.error404 + this.ext;
+                if(params.callback && params.callback instanceof Function) {
+                    
+                }
+            });
     }
 
-    getContent(id) {
-        let url = this.arrObRoutes[id] || 'error';
-        const body = new URLSearchParams();
+    tree(menu) {
+        menu.forEach((item, index) => {
+            this.arRoute[index] = {
+                name: item.innerText,
+                request: this.viewsDir + item.dataset.route + this.ext,
+                url: '/' + item.dataset.route + '/'
+            }
+        });
+
+        this.arRoute.error = {
+            name: '404',
+            request: this.viewsDir + this.error404 + this.ext,
+            url: '/404/'
+        }
+    }
+
+    getContent(id, params = {}) {
+        let url = this.arRoute[id].request || 'error';
 
         if(url !== 'error') {
-            fetch(url, { type: 'async', method: 'POST', responseType: 'html', headers: {
-                'Access-Control-Allow-Origin': '*',
-            }, body}).then();
+            Routing.ajax(url, params);
         }
         else {
-            fetch(this.arrObRoutes.error404).then();
+            
         }
+    }
+
+    static setUrl(url, title) {
+        let tagTitle = document.querySelector('title');
+        let h1 = document.body.querySelector('h1');
+
+        tagTitle.innerText = title;
+        h1.innerText = title;
+
+
+        //history.pushState({page: 1}, title, url);
+
     }
 }
 

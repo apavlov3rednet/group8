@@ -12,87 +12,37 @@ class Routing
      * @param {*} url important
      * @param {method = GET*|POST, type = sync*|async, reponseType = text} params options
      */
-    static ajaxOld(url, params = {}) {
-        //Старт события XHR
-        let xhr = new XMLHttpRequest();
-
-        //Определяем метод запроса и его тип
-        if(params.method != 'GET')
-            xhr.open(params.method, url, params.type === 'async');
-        else
-            xhr.open('GET', url, params.type === 'async');
-
-        //Ожидаемый тип данных от сервера    
-        if(params.type === 'async')
-            xhr.responseType = (params.responseType) ? params.responseType : 'json';
-
-        //Заголовки
-        //xhr.setRequestHeader('Content-Type', 'application/json');
-        if(params.headers instanceof Array) {
-            params.headers.forEach((item, index) => xhr.setRequestHeader(index , item));
-        }
-
-        if(params.data && Object.keys(params.data).length > 0) {
-            xhr.send(params.data);
-        }
-        else {
-            xhr.send();
-        }
-            
-        //Прогресс выполнения запроса
-        xhr.onprogress = function(event) {
-            console.log(event);
-        }
-
-        //Результат обращения к серверу
-        xhr.onload = function() {
-            /**
-             * 100 - 120 - ошибки которые происходят на физическом сервере
-             * 200 - 226 - положительный ответ
-             * 300 - 308 - редиректы
-             * 400 - 499 - ошибки приложения, клиента
-             * 500 - 526 - ошибки сервера, как приложения
-             */
-            if(xhr.status != 200) {
-                console.error(`Error ${xhr.status}: ${xhr.statusText}`); // Error 404: Not found;
-            }
-            else {
-                console.log(xhr.response);
-            }
-        }
-
-        //Произошла ошибка запроса
-        xhr.onerror = function(event) {
-            console.error(event);
-        }
-
-    }
-
     static ajax(url, params = {}) {
         let _this = this;
-        let content = fetch(url)
+        fetch(url)
             .then(response => {
+                //Определяем формат ответа сервера, если не указан то текст по умолчанию
+                if(params.type === 'json')
+                    return response.json();
+
+                if(params.type === 'blob')
+                    return response.blob();
+
                 return response.text();
             })
             .then(data => {
-                let route;
-                let view = new View();
-                
-                for(let i in params.routes) {
-                    if(params.routes[i].request === url) {
-                        route = params.routes[i];
-                    }
-                }
+                //Проверяем на наличие коллбек функции для успешного исполнения
+                if(params.onsucces && params.onsucces instanceof Function) {
+                    let getData = params;
 
-                _this.setUrl(route.url, route.name);
-                view.setContent(data);
+                    if(data != '')
+                        getData.answer = data;
 
-                if(params.callback && params.callback instanceof Function) {
-                    
+                    params.onsucces(getData); //Вызов коллбек функции
                 }
+                else return data;
             });
     }
 
+    /**
+     * Дерево маршрутизации
+     * @param {*} menu 
+     */
     tree(menu) {
         menu.forEach((item, index) => {
             this.arRoute[index] = {
@@ -109,30 +59,27 @@ class Routing
         }
     }
 
-    getContent(id, params = {}) {
+    /**
+     * Получаем контент по маршруту
+     * @param {*} id 
+     * @param {*} onsucces Function
+     */
+    getContent(id, onsucces) {
         let url = this.arRoute[id].request || 'error';
+        let title = this.arRoute[id].name;
+        let pageUrl = this.arRoute[id].url;
 
         if(url !== 'error') {
-            Routing.ajax(url, params);
+            Routing.ajax(url, {
+                title: title,
+                onsucces: onsucces //коллбек-функция
+            });
         }
-        else {
-            
-        }
+
+        Routing.setUrl(pageUrl, title); //Устанавливаем URL страницы
     }
 
     static setUrl(url, title) {
-        let tagTitle = document.querySelector('title');
-        let h1 = document.body.querySelector('h1');
-
-        tagTitle.innerText = title;
-        h1.innerText = title;
-
-
         //history.pushState({page: 1}, title, url);
-
     }
 }
-
-
-//jQuery $.ajax()
-//BX BX.ajax()

@@ -1,24 +1,43 @@
 class View {
-    constructor() {
-        this.obContent = document.getElementById('content');
-    }
+    /**
+     * Установка полученного контента, Визуализация
+     * @param {*} content 
+     */
+    static setContent(content) {
+        let obContent = document.getElementById('content');
+        let title = content.title;
+        
+        obContent.innerHTML = content.answer;
 
-    setContent(content) {
-        this.obContent.innerHTML = content;
+        let obForm = obContent.querySelector('form');
+        let h1 = document.querySelector('h1');
+        let obTitle = document.querySelector('title');
 
-        let obForm = this.obContent.querySelector('form');
+        h1.innerHTML = title;
+        obTitle.innerHTML = title;
+
         if(obForm) {
-            let arName = obForm.dataset.base;
-            let db = DB.getValue(arName) || [];
+            let dbName = obForm.dataset.base;
+            let db = DB.getValue(dbName) || [];
+
+            let arSelect = obForm.querySelectorAll('select');
     
-    
-            this.bindEvents(obForm, db, arName);
-            this.updateList();
+            View.bindEvents(obForm, db, dbName);
+
+            //Обновление селектов если они есть на форме
+            arSelect.forEach(select => {
+                let dbSelectName = select.getAttribute('name').toLowerCase() + 's'; //получение имени базы данных для селекта
+
+                let dbSelect = DB.getValue(dbSelectName) || []; //получение базы данных
+
+                console.log(dbSelect)
+                View.updateList(select, dbSelect);
+            });
         }
         
     }
 
-    bindEvents(obForm, ar, db, callback = []) {
+    static bindEvents(obForm, ar, db, callback) {
         let _this = this;
         obForm.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -38,14 +57,10 @@ class View {
 
             //Добавляем в базу данных
             DB.setValue(db, ar);
-
-            callback.forEach(item => {
-                _this.updateList(item, ar);
-            });
         });
     }
 
-    updateList(select, arr, title = 'Выберите') {
+    static updateList(select, arr, title = 'Выберите') {
         let childrens = [];
 
         select.innerHTML = '';

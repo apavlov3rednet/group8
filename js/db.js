@@ -40,6 +40,14 @@ class DB {
         }
     }
 
+    static getCount(key) {
+        let values = DB.getValue(key);
+        if(values instanceof Array)
+            return values.length;
+
+        return 0;
+    }
+
     static getValue(key) {
         //this.initDb();
 

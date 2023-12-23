@@ -30,7 +30,6 @@ class View {
 
                 let dbSelect = DB.getValue(dbSelectName) || []; //получение базы данных
 
-                console.log(dbSelect)
                 View.updateList(select, dbSelect);
             });
         }
@@ -50,7 +49,16 @@ class View {
                 let params = {};
                 params[item.name] = item.value;
                 model.set(params);
-                item.value = '';
+                
+                switch(item.tagName) {
+                    case "INPUT":
+                        item.value = '';
+                    break;
+
+                    case "SELECT":
+                        item.value = 0;
+                    break;
+                }
             });
 
             ar.push(model);
@@ -81,7 +89,20 @@ class View {
 
         //Обновляем селект
         DOM.adjust(select, {
-            children: childrens
+            children: childrens,
+            events: {
+                //Перевязка связанного поля по имени основного поля
+                change: function(events) {
+                    if(select.dataset.rel) {
+                        let id = select.value; //Значение основного поля
+                        let relationSelect = document.getElementById(select.dataset.rel); //Объект связанного селекта
+                        let db = relationSelect.getAttribute('name').toLowerCase() + 's'; //Имя базы данных связанного селекта
+                        let arDb = DB.getValue(db).filter(item => item.params[select.getAttribute('name')] === id) || []; //Получаем данные по фильтру для связанного селекта
+            
+                        View.updateList(relationSelect, arDb); //Обновляем связанный селект
+                    }
+                }
+            }
         });
     }
 }

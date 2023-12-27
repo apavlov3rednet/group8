@@ -81,17 +81,21 @@ class Table extends DOM {
             if(row instanceof Array) {
                 let obRow, arRowChild = [];
 
-                row.forEach(item => {
+                row.forEach((item, index) => {
                     let reg = new RegExp('^[0-9]{1,3}[\.]{1}[0-9]+$'), str;
 
                     if(String(item).match(reg)) {
+                        if(index != 0) {
+                            let sim = DB.getSimData(item);
+                        }
+                            
                         str = String(item).slice(0,7) + '...';
                     }
                     else {
                         str = item;
                     }
 
-                    arRowChild.push(Table.create('td', {text: str}));
+                    arRowChild.push(Table.create('td', {html: str}));
                 });
 
                 obRow = Table.create('tr', {

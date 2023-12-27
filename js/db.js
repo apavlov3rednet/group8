@@ -1,10 +1,10 @@
 class DB {
-    static #DBNAME = 'mongodb'; //имя базы
-    static #LOCATION = 'mongodb://localhost'; //127.0.0.1
+    static #DBNAME = "mongodb"; //имя базы
+    static #LOCATION = "mongodb://localhost"; //127.0.0.1
     static #PORT = 27017; //порт
     static #LOGIN; //логин
     static #PSSWD; //пароль
- 
+
     constructor() {}
 
     static initDb() {
@@ -21,46 +21,52 @@ class DB {
     static setValue(key, value) {
         //this.initDb();
 
-        let lastElement = [key, value[value.length-1].id];
+        let lastElement = [key, value[value.length - 1].id];
 
-        if(!value || value === '' || typeof value === undefined) {
+        if (!value || value === "" || typeof value === undefined) {
             this.removeValue(key);
         }
-              
+
         window.localStorage.setItem(key, JSON.stringify(value));
 
-        if(key!= 'similar' && lastElement instanceof Array)
+        if (key != "similar" && lastElement instanceof Array)
             DB.setSimilar(lastElement);
         //this.mongoClient.close();
     }
 
     static setSimilar(ar) {
-        let curSimilar = DB.getValue('similar') || [];
+        let curSimilar = DB.getValue("similar") || [];
 
         curSimilar.push(ar);
 
-        DB.setValue('similar', curSimilar);
+        DB.setValue("similar", curSimilar);
     }
 
     static removeValue(key) {
-        if(confirm('Действительно удаляем?')) {
+        if (confirm("Действительно удаляем?")) {
             //this.initDb();
 
             window.localStorage.removeItem(key);
-    
+
             //this.mongoClient.close();
         }
     }
 
     static getCount(key) {
         let values = DB.getValue(key);
-        if(values instanceof Array)
-            return values.length;
+        if (values instanceof Array) return values.length;
 
         return 0;
     }
 
     static getSimData(id) {
+        let similar = DB.getValue("similar"),
+            findElement = similar.filter((item) => {
+                
+            });
+
+        console.log(findElement);
+
         return id;
     }
 
@@ -69,11 +75,11 @@ class DB {
 
         let value = window.localStorage.getItem(key);
 
-        if(this.isJson(value)) {
-             //this.mongoClient.close();
+        if (this.isJson(value)) {
+            //this.mongoClient.close();
             return JSON.parse(value);
         }
-            
+
         //this.mongoClient.close();
         return value;
     }
@@ -81,8 +87,7 @@ class DB {
     static isJson(value) {
         try {
             JSON.parse(value);
-        }
-        catch(error) {
+        } catch (error) {
             return false;
         }
 

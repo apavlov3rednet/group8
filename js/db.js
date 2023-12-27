@@ -21,13 +21,25 @@ class DB {
     static setValue(key, value) {
         //this.initDb();
 
+        let lastElement = [key, value[value.length-1].id];
+
         if(!value || value === '' || typeof value === undefined) {
             this.removeValue(key);
         }
-                
+              
         window.localStorage.setItem(key, JSON.stringify(value));
 
+        if(key!= 'similar' && lastElement instanceof Array)
+            DB.setSimilar(lastElement);
         //this.mongoClient.close();
+    }
+
+    static setSimilar(ar) {
+        let curSimilar = DB.getValue('similar') || [];
+
+        curSimilar.push(ar);
+
+        DB.setValue('similar', curSimilar);
     }
 
     static removeValue(key) {
@@ -46,6 +58,10 @@ class DB {
             return values.length;
 
         return 0;
+    }
+
+    static getSimData(id) {
+        return id;
     }
 
     static getValue(key) {

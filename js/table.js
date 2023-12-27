@@ -82,7 +82,16 @@ class Table extends DOM {
                 let obRow, arRowChild = [];
 
                 row.forEach(item => {
-                    arRowChild.push(Table.create('td', {text: item}));
+                    let reg = new RegExp('^[0-9]{1,3}[\.]{1}[0-9]+$'), str;
+
+                    if(String(item).match(reg)) {
+                        str = String(item).slice(0,7) + '...';
+                    }
+                    else {
+                        str = item;
+                    }
+
+                    arRowChild.push(Table.create('td', {text: str}));
                 });
 
                 obRow = Table.create('tr', {

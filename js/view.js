@@ -4,7 +4,7 @@ class View {
      * @param {*} content 
      */
     static setContent(content) {
-        let obContent = document.getElementById('content');
+        let obContent = document.getElementById('form');
         let title = content.title;
         
         obContent.innerHTML = content.answer;
@@ -21,8 +21,15 @@ class View {
             let db = DB.getValue(dbName) || [];
 
             let arSelect = obForm.querySelectorAll('select');
+
+            let arCountInput = obForm.querySelectorAll('[name=PRICE], [name=COUNT], [name=TOTAL_PRICE]');
+
+            if(arCountInput.length === 3) {
+                View.updateTotalCount(arCountInput);
+            }
     
             View.bindEvents(obForm, db, dbName);
+            View.setTable(dbName);
 
             //Обновление селектов если они есть на форме
             arSelect.forEach(select => {
@@ -34,6 +41,42 @@ class View {
             });
         }
         
+    }
+
+    static setTable(baseName) {
+        let dbValues = DB.getValue(baseName) || [];
+        let data = [];
+        let arHead = [];
+        let obContent = document.getElementById('content');
+
+        if(dbValues instanceof Array) {
+            dbValues.forEach((item, index) => {
+                let row = [];
+                row.push(item.id);
+
+                if(index === 0)
+                    arHead.push('ID');
+
+                for (let i in item.params) {
+                    row.push(item.params[i]);
+
+                    if(index === 0)
+                        arHead.push(Loc.getMessage(i));
+                }
+
+                data.push(row);
+            });
+        }
+
+        let table = Table.generate(arHead, data, [], {
+            className: 'simple-table'
+        });
+
+        obContent.innerHTML = '';
+
+        DOM.adjust(obContent, {
+            children: [table]
+        })
     }
 
     static bindEvents(obForm, ar, db, callback) {
@@ -65,6 +108,7 @@ class View {
 
             //Добавляем в базу данных
             DB.setValue(db, ar);
+            View.setTable(db);
         });
     }
 
@@ -102,6 +146,18 @@ class View {
                         View.updateList(relationSelect, arDb); //Обновляем связанный селект
                     }
                 }
+            }
+        });
+    }
+
+    static updateTotalCount(arFields = []) {
+        arFields.forEach(item => {
+            if(item.getAttribute('name') == 'PRICE' || item.getAttribute('name') == 'COUNT') {
+                item.addEventListener('change', function() {
+                    let totalPrice = document.querySelector('[name=PRICE]').value * document.querySelector('[name=COUNT]').value;
+
+                    document.querySelector('[name=TOTAL_PRICE]').value = totalPrice;
+                });
             }
         });
     }

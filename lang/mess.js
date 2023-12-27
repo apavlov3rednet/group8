@@ -1,7 +1,17 @@
-window.mess = {
+window.MESS = {
     BRAND: 'Бренд',
     MODEL: 'Модель',
     CARDS: 'Объект',
     OWNER: 'Владелец',
-    SERVICE: 'Услуга'
+    SERVICE: 'Услуга',
+    NAME : 'Название',
+    LAST_NAME : 'Фамилия',
+    SECOND_NAME: 'Отчество',
+    BD: 'Дата рождения',
+    GOV_NUMBER: 'Регистрационный номер',
+    OBJECT : 'Объект',
+    NAME_SERVICE: 'Наименование услуги',
+    PRICE: 'Цена',
+    COUNT: 'Кол-во',
+    TOTAL_PRICE: 'Полная стоимость',
 }

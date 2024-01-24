@@ -1,4 +1,4 @@
-class DB {
+class MongoDB {
     static #DBNAME = "group8"; //имя базы
     static #LOCATION = "mongodb://localhost"; //127.0.0.1
     static #PORT = 27017; //порт
@@ -111,3 +111,5 @@ class DB {
         return true;
     }
 }
+
+module.exports = MongoDB;

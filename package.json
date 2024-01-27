@@ -5,13 +5,18 @@
   "main": "index.js",
   "scripts": {
     "mongoStart": "node js/mongodb.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon app"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.18.2",
     "mongodb": "6.0",
     "mongoose": "^8.1.0",
     "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }

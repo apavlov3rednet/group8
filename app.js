@@ -1,100 +1,52 @@
-//Подключаем модуль поддержки протокла HTTP
-const http = require('http');
-//Подключаем модуль управления файлами
-const fs = require('fs'); //file system
-const path = require('path');
 const express = require('express');
+const path = require('path');
+const morgan = require('morgan');
 
-const PORT = 8082;
+const app = express();
 
-const server = http.createServer(function(req, res) {
-    console.log('Server request');
-    console.log(req.url, req.method);
+const PORT = 8085;
 
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<meta charset="UTF-8">');
+const createPath = (page, dir = 'views', ext = 'html') => {
+    return path.resolve(__dirname, dir, `${page}.${ext}`);
+};
 
-    //res.write('<link rel="stylesheet" href="style.css">');
-    //res.write('<h1>Test</h1>');
-    //res.setHeader('Content-Type', 'application/json');
+app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
 
-    const createPath = (page) => path.resolve(__dirname, 'views', `${page}.tmpl`);
+app.set('views', 'views');
 
-    let basePath = '';
+app.use(express.urlencoded({extended: true}));
 
-    switch(req.url) {
-        case '/':
-            basePath = 'index.html';
-        break;
+app.use(express.static('public'));
 
-        // case '/index.html':
-        //     res.setHeader('Location', '/');
-        //     res.statusCode = 301; //Контролируемый редирект
-            
-        // break;
-
-        case '/brands':
-            basePath = createPath('brands');
-        break;
-
-        case '/models':
-            basePath = createPath('models');
-        break;
-
-        case '/objects':
-            basePath = createPath('objects');
-        break;
-
-        case '/owners':
-            basePath = createPath('owners');
-        break;
-
-        case '/services':
-            basePath = createPath('services');
-        break;
-
-        default: 
-
-        break;
-    }
-
-    // if(req.url != '/') {
-    //     let exp = '/^([a-z]+)$';
-    //     let page = req.url.match(exp);
-    //     console.log(page); 
-    // }
-
-    // const app = express();
-
-    // app.use(express.static('public'));
-
-    // app.use(req.url, function(_, res) {
-    //     console.log(_, res);
-    // });
-
-    if(basePath != '') {
-        fs.readFile(basePath, (err, data) => {
-            if(err) {
-                console.log(err);
-                res.end();
-            }
-            else {
-                res.write(data);
-                res.end();
-            }
-        });
-    }
-    else {
-        res.end();
-    }
+app.get('/', (req, res) => {
+    const title = 'Home';
+    res.sendFile(createPath('index'), {title});
 });
 
-// const app = express();
+app.get('/index.html', (req, res) => {
+    res.statusCode = 301;
+    res.redirect('/');
+});
 
-// app.use(express.static('/public'));
+app.get('/:page/', (req, res) => {
+    const title = req.params.page;
+    res.sendFile(createPath(req.params.page), {title});
+});
 
-// app.listen(PORT);
+app.get('/:page/:name/', (req, res) => {
+    console.log(req.params.name);
+    const title = req.params.page;
+    res.sendFile(createPath(req.params.page), {title});
+});
 
-server.listen(PORT, 'localhost', function() {
-    console.log('Server start listen');
+//Обработка ошибки обращения к серверу
+//Всегда должен быть последним
+app.use((req, res) => {
+    res
+    .status(404)
+    .sendFile(createPath('404'))
+});
+
+app.listen(PORT, (error) => {
+    (error) ? console.log(error) : console.log('Server start');
 });

@@ -1,3 +1,5 @@
+const MongoClient = require('mongodb').MongoClient;
+
 class MongoDB {
     static #DBNAME = "group8"; //имя базы
     static #LOCATION = "mongodb://localhost"; //127.0.0.1
@@ -7,17 +9,34 @@ class MongoDB {
 
     constructor() {}
 
-    static initDb() {
-        const MongoClient = require(DB.#DBNAME).MongoClient;
-        const url = [DB.#LOCATION, DB.#PORT].join(":"); //mongodb://localhost:12017
+    Init() {
+        console.log('start DB connect');
+        const url = [MongoDB.#LOCATION, MongoDB.#PORT].join(":") + '/'; //mongodb://localhost:12017
 
-        this.mongoClient = new MongoClient(url);
-        this.client = this.mongoClient.connect();//login && pass
-        this.db = client.db(DB.#DBNAME);
+        this.client = new MongoClient(url);
+        this.db = this.client.db(MongoDB.#DBNAME);
+        console.log('DB connect');
+    }
+
+    async getCountElements(collectionName) {
+        try {
+            if(collectionName != '') {
+                const collection = this.db.collection(collectionName);
+                const count = await collection.countDocuments();
+                console.log(count);
+                return count;
+            }
+            else {
+                return 0;
+            }
+        }
+        catch(e) {
+            console.log(e);
+        }
     }
 
     static issetCollection(collectionName) {
-        this.initDb();
+        this.Init();
         let result = false;
         if(collectionName != "") {
             result = (this.db[collectionName]);
@@ -43,7 +62,7 @@ class MongoDB {
 
     static setValue(collectionName, props = {}) {
         let id = 0;
-        this.initDb();
+        this.Init();
 
         if(collectionName === '' || Object.keys(props).length == 0) {
             this.mongoClient.close();
@@ -66,7 +85,7 @@ class MongoDB {
     }
 
     static getCount(collectionName) {
-        this.initDb();
+        this.Init();
         let result = 0;
         if(collectionName != "") {
             result = this.db[collectionName].count();
@@ -75,16 +94,15 @@ class MongoDB {
         return result;
     }
 
-    static getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
+    getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
         let ob = null;
-        this.initDb();
 
         if(collectionName == "") {
             this.mongoClient.close();
             return false;
         }
 
-        let collection = this.db.getCollection(collectionName);
+        let collection = this.db.collection(collectionName);
         let request = [filter];
 
         if(select.length > 0) {
@@ -95,9 +113,11 @@ class MongoDB {
             request.push(arSelect); //request = [filter, arSelect]
         }
 
-        ob = collection.find(...request).limit(limit).skip(pageCount);
+        console.log(...request);
 
-        this.mongoClient.close();
+        ob = collection.find(...request).toArray();//.limit(limit).skip(pageCount);
+
+        this.client.close();
         return ob;
     }
 

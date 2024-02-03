@@ -95,8 +95,6 @@ class MongoDB {
     }
 
     async getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
-        let ob = null;
-
         if(collectionName == "") {
             this.mongoClient.close();
             return false;
@@ -113,11 +111,7 @@ class MongoDB {
             request.push(arSelect); //request = [filter, arSelect]
         }
 
-        console.log(...request);
-
-        ob = collection.find(...request).toArray();//.limit(limit).skip(pageCount);
-        console.log(ob);
-        return ob;
+        return await collection.find(...request).toArray();//.limit(limit).skip(pageCount);
     }
 
     static isJson(value) {

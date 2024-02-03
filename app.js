@@ -47,11 +47,11 @@ app.get('/index.html', (req, res) => {
     res.redirect('/');
 });
 
-app.get('/:page/', (req, res) => {
+app.get('/:page/', async (req, res) => {
     const title = req.params.page;
     res.sendFile(createPath(req.params.page), {title});
 
-    let list = db.getValue(req.params.page, {}, ['_id', 'TITLE']);
+    let list = await db.getValue(req.params.page, {}, ['_id', 'TITLE']);
     console.log(list);
 });
 

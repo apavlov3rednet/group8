@@ -94,7 +94,7 @@ class MongoDB {
         return result;
     }
 
-    getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
+    async getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
         let ob = null;
 
         if(collectionName == "") {
@@ -116,8 +116,7 @@ class MongoDB {
         console.log(...request);
 
         ob = collection.find(...request).toArray();//.limit(limit).skip(pageCount);
-
-        this.client.close();
+        console.log(ob);
         return ob;
     }
 

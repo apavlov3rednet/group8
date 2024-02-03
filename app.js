@@ -51,8 +51,8 @@ app.get('/:page/', (req, res) => {
     const title = req.params.page;
     res.sendFile(createPath(req.params.page), {title});
 
-    //let list = db.getValue(req.params.page, {}, ['_id', 'TITLE']);
-    //console.log(list);
+    let list = db.getValue(req.params.page, {}, ['_id', 'TITLE']);
+    console.log(list);
 });
 
 app.get('/views/:page.html', (req, res) => {

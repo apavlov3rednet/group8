@@ -21,9 +21,12 @@
         </menu>
 
         <div id="form">
-            <form action="" name="BRAND" id="formBrand" data-base='brands'>
+            <form action="" method="POST" name="BRAND" id="formBrand" data-base='brands'>
                 <h2>Бренд</h2>
-                <input type="text" name="BRAND" placeholder="Введите название бренда">
+                <input type="text" name="TITLE" placeholder="Введите название бренда">
+                <input type="text" name="PARENT_COMPANY" placeholder="Родительская компания">
+                <input type="text" name="COUNTRY" placeholder="Страна">
+                <input type="number" name="BUDGET" placeholder="Бюджет">
         
                 <button>Сохранить</button>
             </form>

@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const MongoDB = require('./server/mongodb');
+const { ObjectId } = require('mongodb');
 
 // const MongoClient = require('mongodb').MongoClient;
 
@@ -49,10 +50,8 @@ app.get('/index.html', (req, res) => {
 
 app.get('/:page/', async (req, res) => {
     const title = req.params.page;
-    res.sendFile(createPath(req.params.page), {title});
-
     let list = await db.getValue(req.params.page, {}, ['_id', 'TITLE']);
-    console.log(list);
+    res.sendFile(createPath(req.params.page), {title});
 });
 
 app.get('/views/:page.html', (req, res) => {
@@ -66,11 +65,52 @@ app.get('/:page/:name/', (req, res) => {
 });
 
 //POST requests
-app.post('/:page/', (req, res) => {
-    const title = req.params.page;
+app.post('/:page/', async (req, res) => {
     const data = req.body;
+    const model = require('./server/models/'+req.params.page);
+    
+    let pushData = {};
 
-    res.sendFile(createPath(req.params.page), {title});
+    console.log(model, data);
+
+    for(let index in data) {
+        let val = data[index];
+        let schema = model[index];
+
+        if(schema.validate) {
+            switch(schema.type) {
+                case 'string':
+                    if(val instanceof String) {
+                        pushData[index] = val;
+                    }
+                break;
+    
+                case 'number':
+                    if(val instanceof Number) {
+                        pushData[index] = val;
+                    }
+                break;
+            }
+        }
+        else {
+            pushData[index] = val;
+        }
+    }
+
+    console.log(pushData)
+
+
+    res.sendFile(createPath(req.params.page));
+
+    // let id = await db.setValue(req.params.page, data);
+
+    // if(id.insertedId instanceof ObjectId) {
+    //     res.redirect(req.baseUrl + '?success=Y');
+    // }
+    // else {
+    //     res.redirect(req.baseUrl + '?success=N');
+    // }
+  
 });
 
 //Обработка ошибки обращения к серверу

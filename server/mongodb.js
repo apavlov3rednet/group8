@@ -60,8 +60,7 @@ class MongoDB {
         return false;
     }
 
-    static setValue(collectionName, props = {}) {
-        let id = 0;
+    async setValue(collectionName, props = {}) {
         this.Init();
 
         if(collectionName === '' || Object.keys(props).length == 0) {
@@ -69,8 +68,9 @@ class MongoDB {
             return false;
         }
 
-        id = this.db[collectionName].insertOne(props); //db.collectionName
-        this.mongoClient.close();
+        let collection = this.db.collection(collectionName);
+
+        let id = await collection.insertOne(props); //db.collectionName
         return id;
     }
 

@@ -31,6 +31,14 @@ const createPath = (page, dir = 'views', ext = 'html') => {
 
 app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
 
+// app.use((req,res) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*');
+//     res.setHeader('Access-Control-Allow-Method', 'GET');
+//     res.setHeader('Access-Control-Allow-Headers', 'X-Requestes-With,content-type');
+//     res.setHeader('Access-Control-Allow-Credentials', true);
+//     //next();
+// });
+
 app.set('views', 'views');
 
 app.use(express.urlencoded({extended: true}));
@@ -40,7 +48,7 @@ app.use(express.static('public'));
 //GET requests
 app.get('/', (req, res) => {
     const title = 'Home';
-    res.sendFile(createPath('index'), {title});
+    res.sendFile('./public/index.html', {title});
 });
 
 app.get('/index.html', (req, res) => {

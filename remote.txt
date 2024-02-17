@@ -1,0 +1,9 @@
+npm i npm@latest -g
+npm cache clean --force
+удаляем node_modules
+добавляем в .gitignore строку /node_modules
+npm i
+npx create-react-app front
+cd front
+npm run build
+npm run start

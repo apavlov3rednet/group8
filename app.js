@@ -8,7 +8,7 @@ const { ObjectId } = require('mongodb');
 
 const app = express();
 
-const PORT = 8085;
+const PORT = 8000;
 // const client = new MongoClient('mongodb://localhost:27017');
 
 // client.connect().then(mongoClient => {
@@ -31,13 +31,13 @@ const createPath = (page, dir = 'views', ext = 'html') => {
 
 app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
 
-// app.use((req,res) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Method', 'GET');
-//     res.setHeader('Access-Control-Allow-Headers', 'X-Requestes-With,content-type');
-//     res.setHeader('Access-Control-Allow-Credentials', true);
-//     //next();
-// });
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Method', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
 
 app.set('views', 'views');
 
@@ -46,11 +46,11 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 
 //GET requests
-app.get('/', (req, res) => {
-    const title = 'Home';
-    res.sendFile('./public/index.html', {title});
+app.get('/', async (req, res) => {
+    console.log('start index');
+    res.end('text')
 });
-
+/*
 app.get('/index.html', (req, res) => {
     res.statusCode = 301;
     res.redirect('/');
@@ -59,6 +59,7 @@ app.get('/index.html', (req, res) => {
 app.get('/:page/', async (req, res) => {
     const title = req.params.page;
     let list = await db.getValue(req.params.page, {}, ['_id', 'TITLE']);
+    console.log(list);
     res.sendFile(createPath(req.params.page), {title});
 });
 
@@ -78,8 +79,6 @@ app.post('/:page/', async (req, res) => {
     const model = require('./server/models/'+req.params.page);
     
     let pushData = {};
-
-    console.log(model, data);
 
     for(let index in data) {
         let val = data[index];
@@ -104,23 +103,9 @@ app.post('/:page/', async (req, res) => {
             pushData[index] = val;
         }
     }
-
-    console.log(pushData)
-
-
-    res.sendFile(createPath(req.params.page));
-
-    // let id = await db.setValue(req.params.page, data);
-
-    // if(id.insertedId instanceof ObjectId) {
-    //     res.redirect(req.baseUrl + '?success=Y');
-    // }
-    // else {
-    //     res.redirect(req.baseUrl + '?success=N');
-    // }
-  
+    res.sendFile(createPath(req.params.page));  
 });
-
+*/
 //Обработка ошибки обращения к серверу
 //Всегда должен быть последним
 app.use((req, res) => {
@@ -130,5 +115,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, (error) => {
-    (error) ? console.log(error) : console.log('Server start');
+    (error) ? console.log(error) : console.log('Server start on port ' + PORT);
 });

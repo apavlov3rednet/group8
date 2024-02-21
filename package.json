@@ -6,7 +6,7 @@
   "scripts": {
     "mongoStart": "node js/mongodb.js",
     "start": "node index.js",
-    "dev": "nodemon app"
+    "dev": "nodemon server"
   },
   "author": "",
   "license": "MIT",

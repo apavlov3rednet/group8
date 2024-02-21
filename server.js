@@ -32,6 +32,7 @@ const createPath = (page, dir = 'views', ext = 'html') => {
 app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
 
 app.use((req, res, next) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Method', 'GET');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
@@ -39,16 +40,21 @@ app.use((req, res, next) => {
     next();
 });
 
-app.set('views', 'views');
-
-app.use(express.urlencoded({extended: true}));
-
-app.use(express.static('public'));
+// Необходимо для работы как клиент-сервер
+// app.set('views', 'views');
+// app.use(express.urlencoded({extended: true}));
+// app.use(express.static('public'));
 
 //GET requests
 app.get('/', async (req, res) => {
     console.log('start index');
-    res.end('text')
+    let menu = await db.getValue('menu') || {};
+    let list = await db.getValue('brands', {}, ['_id', 'TITLE']);
+    let data = {
+        table: list,
+        menu: menu
+    }
+    res.end(JSON.stringify(data));
 });
 /*
 app.get('/index.html', (req, res) => {

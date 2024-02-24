@@ -98,7 +98,7 @@ export default class MongoDB {
         if(pageCount)
             options.skip = pageCount;
 
-        return await this.collection.find(filter, { query, ...options } ).toArray();//.limit(limit).skip(pageCount);
+        return await this.collection.find(filter, { query, ...options } ).toArray();
     }
 
     static isJson(value) {

@@ -1,20 +1,19 @@
 import { MongoClient } from 'mongodb';
 
-class MongoDB {
+export default class MongoDB {
     static #DBNAME = "group8"; //имя базы
     static #LOCATION = "mongodb://localhost"; //127.0.0.1
     static #PORT = 27017; //порт
     static #LOGIN; //логин
     static #PSSWD; //пароль
 
-    constructor() {}
-
-    Init() {
+    constructor(collectionName) {
         console.log('start DB connect');
         const url = [MongoDB.#LOCATION, MongoDB.#PORT].join(":") + '/'; //mongodb://localhost:12017
 
         this.client = new MongoClient(url);
         this.db = this.client.db(MongoDB.#DBNAME);
+        this.collection = this.db.collection(collectionName);
         console.log('DB connect');
     }
 
@@ -60,27 +59,14 @@ class MongoDB {
         return false;
     }
 
-    async setValue(collectionName, props = {}) {
-        this.Init();
-
-        if(collectionName === '' || Object.keys(props).length == 0) {
-            this.mongoClient.close();
-            return false;
-        }
-
-        let collection = this.db.collection(collectionName);
-
-        let id = await collection.insertOne(props); //db.collectionName
+    async setValue(props = {}) {
+        let id = await this.collection.insertOne(props); //db.collectionName
         return id;
     }
 
     static removeValue(key) {
         if (confirm("Действительно удаляем?")) {
-            //this.initDb();
-
-            window.localStorage.removeItem(key);
-
-            //this.mongoClient.close();
+            this.collection.dropOne(key);
         }
     }
 
@@ -94,24 +80,25 @@ class MongoDB {
         return result;
     }
 
-    async getValue(collectionName, filter = {}, select = [], limit = false, pageCount = false) {
-        if(collectionName == "") {
-            this.mongoClient.close();
-            return false;
-        }
-
-        let collection = this.db.collection(collectionName);
-        let request = [filter];
+    async getValue(filter = {}, select = [], limit = false, pageCount = false) {
+        let query = [];
+        let options = {};
 
         if(select.length > 0) {
             let arSelect = {};
             for (let key of select) {
                 arSelect[key] = 1;
             }
-            request.push(arSelect); //request = [filter, arSelect]
+            query.push(arSelect); //request = [filter, arSelect]
         }
 
-        return await collection.find(...request).toArray();//.limit(limit).skip(pageCount);
+        if(limit)
+            options.limit = limit;
+
+        if(pageCount)
+            options.skip = pageCount;
+
+        return await this.collection.find(filter, { query, ...options } ).toArray();//.limit(limit).skip(pageCount);
     }
 
     static isJson(value) {
@@ -124,5 +111,3 @@ class MongoDB {
         return true;
     }
 }
-
-export default MongoDB;

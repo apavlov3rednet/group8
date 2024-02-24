@@ -7,32 +7,32 @@ const serverAddr = 'http://localhost:8000/';
 //const PORT = 3000;
 
 function App() {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState({
-    menu: {},
-    table: {},
-    form: {}
-  });
+  // const [loading, setLoading] = useState(false);
+  // const [data, setData] = useState({
+  //   menu: {},
+  //   table: {},
+  //   form: {}
+  // });
 
-  const serverResponse = useCallback(async () => {
-    setLoading(true);
-    const response = await fetch(serverAddr);
-    const srData = await response.json();
+  // const serverResponse = useCallback(async () => {
+  //   setLoading(true);
+  //   const response = await fetch(serverAddr);
+  //   const srData = await response.json();
 
-    setData(srData);
-    setLoading(false);
-  }, []);
+  //   setData(srData);
+  //   setLoading(false);
+  // }, []);
 
-  useEffect(() => {
-    serverResponse();
-    }, [serverResponse]
-  )
+  // useEffect(() => {
+  //   serverResponse();
+  //   }, [serverResponse]
+  // )
 
   return (
     <div className="App">
-      <Header menu={ data.menu } />
+      <Header />
 
-      {loading && <p>Загрузка...</p>}
+      {/* {loading && <p>Загрузка...</p>}
 
       {!loading && (
         <>
@@ -40,7 +40,7 @@ function App() {
             {data.table}
           </Table>
         </>
-      )}
+      )} */}
 
     
     </div>

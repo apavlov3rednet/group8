@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState} from 'react';
 import Logo from '../../images/logo.png';
+import Menu from '../menu/Menu';
 import './style.css';
 
 export default function Header({ ...props }) {
@@ -8,17 +9,22 @@ export default function Header({ ...props }) {
      * 1. Нельзя писать вне компонента
      * 2. useState и useEffect всегда должны быть вверху и без условий
      */
-   //const [now, setNow] = useState(new Date()); //нулевой (now) - элемент состояния; первый (setNow) - функция для изменения элемента состояния
-    const [menu, setMenu] = useState(props.menu);
+    const [now, setNow] = useState(new Date()); //нулевой (now) - элемент состояния; первый (setNow) - функция для изменения элемента состояния
+    // const [menu, setMenu] = useState(props.menu);
 
-    const getMenu = useCallback(() => {
-        setMenu(props.menu);
-    }, []);
+    // const getMenu = useCallback(() => {
+    //     setMenu(props.menu);
+    // }, []);
 
     useEffect(
-        (prev) => {
-            getMenu(prev);
-        }, [getMenu]
+        () => {
+            const interval = setInterval(() => setNow(new Date()), 1000);
+
+            return () => {
+                clearInterval(interval);
+                console.log('clear');
+            }
+        }, []
     )
 
     return (
@@ -28,17 +34,11 @@ export default function Header({ ...props }) {
                 <h1>Single Page Application</h1>
             </div>
             
-            <menu>
-                {
-                    menu.map((el, i) => (
-                        <li key={i} dataRoute={el.LINK}> {el.NAME} </li>
-                    ))
-                }
-            </menu>
-{/* 
+            <Menu />
+
             <div className="timer">
                 Текущее время: { now.toLocaleTimeString() } 
-            </div> */}
+            </div>
         </header>
     )
 }

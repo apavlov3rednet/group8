@@ -1,13 +1,10 @@
-const express = require('express');
-const path = require('path');
-const morgan = require('morgan');
-const MongoDB = require('./server/mongodb');
-const { ObjectId } = require('mongodb');
+import express from 'express';
+import morgan from 'morgan';
+import Fetch from './back/modules/Fetch/index.js';
 
 // const MongoClient = require('mongodb').MongoClient;
 
 const app = express();
-
 const PORT = 8000;
 // const client = new MongoClient('mongodb://localhost:27017');
 
@@ -19,15 +16,12 @@ const PORT = 8000;
 //     console.log(collection);
 // });
 
-const db = new MongoDB;
-db.Init();
-
 // let count = db.getCountElements('brands');
 // console.log(count);
 
-const createPath = (page, dir = 'views', ext = 'html') => {
-    return path.resolve(__dirname, dir, `${page}.${ext}`);
-};
+// const createPath = (page, dir = 'views', ext = 'html') => {
+//     return resolve(__dirname, dir, `${page}.${ext}`);
+// };
 
 app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
 
@@ -46,16 +40,33 @@ app.use((req, res, next) => {
 // app.use(express.static('public'));
 
 //GET requests
-app.get('/', async (req, res) => {
-    console.log('start index');
-    let menu = await db.getValue('menu') || {};
-    let list = await db.getValue('brands', {}, ['_id', 'TITLE']);
-    let data = {
-        table: list,
-        menu: menu
-    }
-    res.end(JSON.stringify(data));
+app.get('/api/getList:CollectionName/', async (req, res) => {
+    let result = {},
+        mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase()),
+        filter = {},
+        select = [],
+        limit = req.query.limit ? req.query.limit : false,
+        skip = req.query.skip ? req.query.skip : false;
+
+    result = await mdb.getValue(filter, select, limit, skip);
+
+    res.end(JSON.stringify(result));
 });
+
+app.get('/:page', async (req, res) => {
+    res.end();
+});
+
+app.post('/api/setValue:CollectionName/', async (req, res) => {
+    const collectionName = req.params.CollectionName.toLowerCase();
+    const mdb = new Fetch.MongoDB(collectionName);
+    const Controll = new Fetch.Controll(collectionName);
+    const result = await mdb.setValue(Controll.preparePost(req.query));
+
+    res.end();
+});
+
+
 /*
 app.get('/index.html', (req, res) => {
     res.statusCode = 301;
@@ -117,7 +128,7 @@ app.post('/:page/', async (req, res) => {
 app.use((req, res) => {
     res
     .status(404)
-    .sendFile(createPath('404'))
+    .end('Error');
 });
 
 app.listen(PORT, (error) => {

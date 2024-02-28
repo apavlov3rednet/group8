@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'; //react and hooks
-import Header from './components/header/Header';
-import Table from './components/table/Table';
+import Header from './components/header/Header.jsx';
+import Table from './components/table/Table.jsx';
 //import './css/style.css';
 
-const serverAddr = 'http://localhost:8000/';
+//const serverAddr = 'http://localhost:8000/';
 //const PORT = 3000;
 
 function App() {
@@ -32,17 +31,7 @@ function App() {
     <div className="App">
       <Header />
 
-      {/* {loading && <p>Загрузка...</p>}
-
-      {!loading && (
-        <>
-          <Table ndfnff='test'>
-            {data.table}
-          </Table>
-        </>
-      )} */}
-
-    
+      <Table />
     </div>
   );
 }

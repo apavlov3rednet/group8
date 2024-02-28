@@ -7,7 +7,8 @@ export default function Menu() {
     const fetchMenu = useCallback(async () => {
         setLoading(true);
         const response = await fetch('http://localhost:8000/api/getListMenu/');
-        setData(await response.json());
+        const unPreparedData = await response.json();
+        setData(unPreparedData.data);
         setLoading(false);
     }, [])
 

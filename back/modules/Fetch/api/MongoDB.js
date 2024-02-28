@@ -1,4 +1,6 @@
 import { MongoClient } from 'mongodb';
+import Schema from '../schema/index.js';
+import Controll from './Controll.js';
 
 export default class MongoDB {
     static #DBNAME = "group8"; //имя базы
@@ -10,10 +12,11 @@ export default class MongoDB {
     constructor(collectionName) {
         console.log('start DB connect');
         const url = [MongoDB.#LOCATION, MongoDB.#PORT].join(":") + '/'; //mongodb://localhost:12017
-
         this.client = new MongoClient(url);
         this.db = this.client.db(MongoDB.#DBNAME);
         this.collection = this.db.collection(collectionName);
+        this.schema = Schema[collectionName];
+        console.log(this.schema);
         console.log('DB connect');
     }
 
@@ -98,7 +101,14 @@ export default class MongoDB {
         if(pageCount)
             options.skip = pageCount;
 
-        return await this.collection.find(filter, { query, ...options } ).toArray();
+        let unPreparedData = await this.collection.find(filter, { query, ...options } ).toArray();
+
+        let data = Controll.prepareData(unPreparedData, this.schema);
+
+        return {
+            head: this.schema,
+            data: data
+        };
     }
 
     static isJson(value) {

@@ -1,7 +1,7 @@
 import {useState, useCallback, useEffect} from 'react';
 import './style.css';
 
-export default function Table() {
+export default function Table({nameTable}) {
     // const Header = function() {
     //     let firstRow = children[0];
     //     let headerCol = [];
@@ -26,7 +26,7 @@ export default function Table() {
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/getListBrands/');
+        const response = await fetch('http://localhost:8000/api/'+ nameTable +'/');
         const unPreparedData = await response.json();
 
         const data = {
@@ -37,7 +37,7 @@ export default function Table() {
 
         setTable(data);
         setLoading(false);
-    }, []);
+    }, [nameTable]);
 
     useEffect(
         () => {fetchTable()}, [fetchTable]
@@ -47,9 +47,9 @@ export default function Table() {
         let header = [];
         for(let i in schema) {
             if(i === '_id')
-                header.push('ID');
+                header.push({loc: 'ID'});
             else
-                header.push(schema[i].loc);
+                header.push(schema[i]);
         } 
 
         header.push('');
@@ -58,11 +58,28 @@ export default function Table() {
             <tr>
                 {
                     header.map((item, index) => (
-                        <th key={index}>{item}</th>
+                        <th key={index} 
+                            className={item.sort ? 'sortable' : null}>
+                                {item.loc}
+                                {item.sort ? ' ::' : null}
+                        </th>
                     ))
                 }
             </tr>
         )
+    }
+
+    async function drop(event) {
+        const url = 'http://localhost:8000/api/' + nameTable + '/' + event.target.value + '/';
+        const confirmWindow = window.confirm('Уверены?');
+        if(confirmWindow) {
+            const response = await fetch(url);
+            const answer = response.status;
+
+            if(answer === 200) {
+                fetchTable();
+            }
+        }
     }
 
     return (
@@ -76,7 +93,7 @@ export default function Table() {
 
                 {
                     !loading && table.body.map(row => (
-                        <tr key={row._id}>
+                        <tr key={row._id} id={row._id}>
                             {
                                 Object.values(row).map((col, index) => (
                                     <td key={index}>
@@ -84,7 +101,10 @@ export default function Table() {
                                     </td> 
                                 ))
                             }
-                            <td><button value={row._id}>Удалить</button></td>
+                            <td>
+                                <button value={row._id} className='edit'></button>
+                                <button value={row._id} onClick={drop} className='drop'></button>
+                            </td>
                         </tr>
                     ))
                 }

@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import Schema from '../schema/index.js';
 import Controll from './Controll.js';
 
@@ -16,7 +16,6 @@ export default class MongoDB {
         this.db = this.client.db(MongoDB.#DBNAME);
         this.collection = this.db.collection(collectionName);
         this.schema = Schema[collectionName];
-        console.log(this.schema);
         console.log('DB connect');
     }
 
@@ -67,10 +66,8 @@ export default class MongoDB {
         return id;
     }
 
-    static removeValue(key) {
-        if (confirm("Действительно удаляем?")) {
-            this.collection.dropOne(key);
-        }
+    async removeValue(id) {
+        await this.collection.deleteOne({_id : new ObjectId(id)});
     }
 
     static getCount(collectionName) {

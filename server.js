@@ -1,6 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import Fetch from './back/modules/Fetch/index.js';
+import schema from './back/modules/Fetch/schema/index.js';
 
 // const MongoClient = require('mongodb').MongoClient;
 
@@ -28,7 +29,7 @@ app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
 app.use((req, res, next) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Method', 'GET');
+    res.setHeader('Access-Control-Allow-Method', 'GET, POST, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
@@ -40,7 +41,7 @@ app.use((req, res, next) => {
 // app.use(express.static('public'));
 
 //GET requests
-app.get('/api/getList:CollectionName/', async (req, res) => {
+app.get('/api/:CollectionName/', async (req, res) => {
     let result = {},
         mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase()),
         filter = {},
@@ -53,11 +54,13 @@ app.get('/api/getList:CollectionName/', async (req, res) => {
     res.end(JSON.stringify(result));
 });
 
-app.get('/:page', async (req, res) => {
-    res.end();
+app.get('/api/schema/:Schema/', async (req, res) => {
+    let obSchema = await schema[req.params.Schema.toLowerCase()];
+    res.end(JSON.stringify(obSchema));
 });
 
-app.post('/api/setValue:CollectionName/', async (req, res) => {
+//POST methods
+app.post('/api/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
     const mdb = new Fetch.MongoDB(collectionName);
     const Controll = new Fetch.Controll(collectionName);
@@ -65,6 +68,13 @@ app.post('/api/setValue:CollectionName/', async (req, res) => {
 
     res.end();
 });
+
+//DELETE methods
+app.get('/api/:CollectionName/:id/', async (req, res) => {
+    let mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase());
+    mdb.removeValue(req.params.id);
+    res.end('deleted');
+}) //app.delete
 
 
 /*

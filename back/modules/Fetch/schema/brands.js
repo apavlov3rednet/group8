@@ -4,25 +4,33 @@ const brands = {
         type: 'String',
         require: true,
         default: 'none',
-        loc: "Название"
+        loc: "Название",
+        sort: true,
+        editable: true
     },
     COUNTRY: {
         type: 'String',
         require: false,
         default: 'none',
-        loc: "Страна"
+        loc: "Страна",
+        sort: true,
+        editable: true
     },
     PARENT_COMPANY: {
         type: 'String',
         require: false,
         default: 'none',
-        loc: "Владеющая компания"
+        loc: "Владеющая компания",
+        sort: true,
+        editable: true
     },
     BUDGET: {
         type: 'Number',
         require: false,
         default: 0,
-        loc: "Годовой бюджет ($)"
+        loc: "Годовой бюджет ($)",
+        sort: true,
+        editable: true
     },
 };
 

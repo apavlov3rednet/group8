@@ -1,7 +1,7 @@
 import Header from './components/header/Header.jsx';
 import Table from './components/table/Table.jsx';
 import Form from './components/form/Form.jsx';
-//import './css/style.css';
+import './App.css';
 
 //const serverAddr = 'http://localhost:8000/';
 //const PORT = 3000;

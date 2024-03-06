@@ -16,6 +16,7 @@ export default class MongoDB {
         this.db = this.client.db(MongoDB.#DBNAME);
         this.collection = this.db.collection(collectionName);
         this.schema = Schema[collectionName];
+        this.controll = new Controll(collectionName);
         console.log('DB connect');
     }
 
@@ -62,7 +63,19 @@ export default class MongoDB {
     }
 
     async setValue(props = {}) {
-        let id = await this.collection.insertOne(props); //db.collectionName
+        let id = 0;
+        let controllData = this.controll.preparePost(props);
+
+        if(controllData._id) {
+            id = controllData._id;
+            //UPDATE
+        }
+        else {
+            //ADD
+            id = await this.collection.insertOne(controllData);
+        }
+
+        //let id = await this.collection.insertOne(props); //db.collectionName
         return id;
     }
 

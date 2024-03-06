@@ -1,6 +1,50 @@
+import { ObjectId } from "mongodb";
+import schema from "../schema/index.js";
+
 export default class Controll {
-    static preparePost(query) {
-        return query;
+
+    constructor(collectionName = '') {
+        if(collectionName == '')
+            return;
+
+        this.schema = schema[collectionName];
+    }
+
+    preparePost(query = {}) {
+        let data = {};
+
+        //Если есть данный атрибут, то это будет сигналом для обновления, если нет - для добавления
+        if(query._id.length > 0) {
+            data._id = new ObjectId(query._id);
+        }
+
+        if(Object.keys(query).length > 0 && Object.keys(this.schema).length > 0) {
+            for (let i in this.schema) {
+                if(i === '_id') continue;
+
+                let checkElement = query[i];
+                let checkSchema = this.schema[i];
+
+                if(checkElement != '') {
+                    switch(checkSchema.type) {
+                        case 'Number':
+                            data[i] = parseFloat(checkElement);
+                        break;
+
+                        case 'String':
+                            data[i] = String(checkElement);
+                        break;
+                    }
+                }
+                else {
+                    data[i] = checkSchema.default;
+                }
+            }
+        }
+
+        console.log(data);
+
+        return data;
     }
 
     static prepareData(data = [], schema = {}) {

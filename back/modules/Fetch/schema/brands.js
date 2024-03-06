@@ -26,7 +26,7 @@ const brands = {
     },
     BUDGET: {
         type: 'Number',
-        require: false,
+        require: true,
         default: 0,
         loc: "Годовой бюджет ($)",
         sort: true,

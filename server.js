@@ -35,10 +35,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Необходимо для работы как клиент-сервер
-// app.set('views', 'views');
-// app.use(express.urlencoded({extended: true}));
-// app.use(express.static('public'));
+app.use(express.urlencoded({extended: true}));
 
 //GET requests
 app.get('/api/:CollectionName/', async (req, res) => {
@@ -54,7 +51,14 @@ app.get('/api/:CollectionName/', async (req, res) => {
     res.end(JSON.stringify(result));
 });
 
-app.get('/api/schema/:Schema/', async (req, res) => {
+//DELETE methods
+app.get('/api/:CollectionName/:id/', async (req, res) => {
+    let mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase());
+    mdb.removeValue(req.params.id);
+    res.end('deleted');
+}); //app.delete
+
+app.get('/api/schema/get/:Schema/', async (req, res) => {
     let obSchema = await schema[req.params.Schema.toLowerCase()];
     res.end(JSON.stringify(obSchema));
 });
@@ -63,18 +67,16 @@ app.get('/api/schema/:Schema/', async (req, res) => {
 app.post('/api/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
     const mdb = new Fetch.MongoDB(collectionName);
-    const Controll = new Fetch.Controll(collectionName);
-    const result = await mdb.setValue(Controll.preparePost(req.query));
 
-    res.end();
+    console.log('form request:', req.body)
+
+    const result = await mdb.setValue(req.body);
+
+    if(result.acknowledged) {
+        let newUrl = "http://localhost:3000/?id=" + String(result.insertedId);
+        res.redirect(newUrl);
+    }
 });
-
-//DELETE methods
-app.get('/api/:CollectionName/:id/', async (req, res) => {
-    let mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase());
-    mdb.removeValue(req.params.id);
-    res.end('deleted');
-}) //app.delete
 
 
 /*

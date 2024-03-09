@@ -1,7 +1,8 @@
 import {useState, useCallback, useEffect} from 'react';
+import config from '../../params/config.js';
 import './style.css';
 
-export default function Table({nameTable}) {
+export default function Table({nameTable, onChange}) {
     // const Header = function() {
     //     let firstRow = children[0];
     //     let headerCol = [];
@@ -26,7 +27,7 @@ export default function Table({nameTable}) {
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/'+ nameTable +'/');
+        const response = await fetch(config.fullApi + nameTable +'/');
         const unPreparedData = await response.json();
 
         const data = {
@@ -69,8 +70,15 @@ export default function Table({nameTable}) {
         )
     }
 
+    async function edit(event) {
+        const url = config.fullApi + nameTable + '/?id=' + event.target.value;
+        const response = await fetch(url);
+        const answer = await response.json();
+        onChange(answer);
+    }
+
     async function drop(event) {
-        const url = 'http://localhost:8000/api/' + nameTable + '/' + event.target.value + '/';
+        const url = config.fullApi + nameTable + '/' + event.target.value + '/';
         const confirmWindow = window.confirm('Уверены?');
         if(confirmWindow) {
             const response = await fetch(url);
@@ -83,7 +91,7 @@ export default function Table({nameTable}) {
     }
 
     return (
-        <table className="simple-table">
+        <table cellPadding={0} cellSpacing={0} className="simple-table">
             <thead>
                 {loading &&  <tr><td>Loading...</td></tr>}
                 {!loading && getHeader(table.header)}
@@ -102,7 +110,7 @@ export default function Table({nameTable}) {
                                 ))
                             }
                             <td>
-                                <button value={row._id} className='edit'></button>
+                                <button value={row._id} onClick={edit} className='edit'></button>
                                 <button value={row._id} onClick={drop} className='drop'></button>
                             </td>
                         </tr>

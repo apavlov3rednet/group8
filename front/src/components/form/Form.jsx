@@ -1,28 +1,31 @@
-import {useState, useCallback, useEffect} from 'react';
+import {useState, useEffect} from 'react';
+import config from '../../params/config.js';
 import './style.css';
 
-export default function Form({nameForm}) {
+export default function Form({nameForm, arValue}) {
     const [schema, setSchema] = useState(null);
-    const url = 'http://localhost:8000/api/' + nameForm + '/';
+    const [formValue, setFormValue] = useState(arValue);
+    const url = config.fullApi + nameForm + '/';
 
     useEffect(
         () => {
             async function fetchData() {
-                const response = await fetch('http://localhost:8000/api/schema/get/' + nameForm + '/');
+                const response = await fetch(config.fullApi + 'schema/get/' + nameForm + '/');
                 const answer = await response.json();
                 setSchema(answer);
               }
               fetchData();
-        }, []
+              setFormValue(arValue);
+        }, [nameForm, arValue]
     );
 
-    function renderForm(data = {}) {
+    function renderForm(data = {}, ar = {}) {
         let formElements = [];
-
         for(let i in data) {
             let newRow = data[i];
 
             newRow.code = i;
+            newRow.value = (ar[i]) ? ar[i] : '';
             switch(newRow.type) {
                 case 'String':
                     newRow.fieldType = 'text';
@@ -61,6 +64,7 @@ export default function Form({nameForm}) {
                             <span>{item.loc} {item.require && '*'}</span>
                             <input name={item.code} 
                             required={item.require && true}
+                            defaultValue={item.value && item.value }
                             step={(item.fieldType === 'number') ? '1000' : null}
                             type={item.fieldType} />
                         </label>
@@ -72,7 +76,7 @@ export default function Form({nameForm}) {
 
     return (
         <form method='POST' action={url}>
-            { renderForm(schema) }
+            { renderForm(schema, formValue) }
 
             <button>Сохранить</button>
         </form>

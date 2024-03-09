@@ -22,7 +22,6 @@ export default function Header({ ...props }) {
 
             return () => {
                 clearInterval(interval);
-                console.log('clear');
             }
         }, []
     )

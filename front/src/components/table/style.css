@@ -1,6 +1,7 @@
 .simple-table {
     margin:20px 0;
-    border:0;
+    border:1px solid #aaa;
+    border-radius: 4px;
 }
 
 .simple-table thead tr th {
@@ -9,8 +10,17 @@
     color: #fff;
 }
 
+.simple-table tbody tr {
+    transition: all .15s ease-in;
+}
+
 .simple-table tbody tr:nth-child(even) {
     background: #1976D220;
+}
+
+.simple-table tbody tr:hover {
+    background:#333;
+    color:#fff;
 }
 
 .simple-table tbody tr td {

@@ -10,11 +10,11 @@ header .LogoGroup {
     display:flex;
     flex-wrap:wrap;
     width:200px;
+    gap:15px;
 }
 
 header .LogoGroup h1{
     display:block;
-    width:100%;
 }
 
 header .LogoGroup h1 {

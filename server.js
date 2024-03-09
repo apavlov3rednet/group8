@@ -2,6 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 import Fetch from './back/modules/Fetch/index.js';
 import schema from './back/modules/Fetch/schema/index.js';
+import { ObjectId } from 'mongodb';
+import config from './back/params/config.js';
 
 // const MongoClient = require('mongodb').MongoClient;
 
@@ -46,6 +48,12 @@ app.get('/api/:CollectionName/', async (req, res) => {
         limit = req.query.limit ? req.query.limit : false,
         skip = req.query.skip ? req.query.skip : false;
 
+    if(req.query) {
+        if(req.query.id) {
+            filter._id = new ObjectId(req.query.id);
+        }
+    }
+
     result = await mdb.getValue(filter, select, limit, skip);
 
     res.end(JSON.stringify(result));
@@ -68,12 +76,10 @@ app.post('/api/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
     const mdb = new Fetch.MongoDB(collectionName);
 
-    console.log('form request:', req.body)
-
     const result = await mdb.setValue(req.body);
 
     if(result.acknowledged) {
-        let newUrl = "http://localhost:3000/?id=" + String(result.insertedId);
+        let newUrl = config.fullClient + "/?id=" + String(result.insertedId);
         res.redirect(newUrl);
     }
 });

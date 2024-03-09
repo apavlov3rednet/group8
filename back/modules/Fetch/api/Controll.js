@@ -42,8 +42,6 @@ export default class Controll {
             }
         }
 
-        console.log(data);
-
         return data;
     }
 

@@ -1,7 +1,6 @@
 import Header from './components/header/Header.jsx';
-import Table from './components/table/Table.jsx';
-import Form from './components/form/Form.jsx';
 import './App.css';
+import Container from './components/container/Container.jsx';
 
 //const serverAddr = 'http://localhost:8000/';
 //const PORT = 3000;
@@ -32,10 +31,7 @@ function App() {
     <div className="App">
       <Header />
 
-      <div className='container'>
-        <Form nameForm='Brands'/>
-        <Table nameTable='Brands'/>
-      </div>
+      <Container></Container>
       
     </div>
   );

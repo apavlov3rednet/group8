@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { DBRef, ObjectId } from "mongodb";
 import schema from "../schema/index.js";
 import MongoDB from "./MongoDB.js";
 import Fetch from "../index.js";
@@ -63,10 +63,11 @@ export default class Controll {
                     else {
                         async function getSim() {
                             let mdb = new Fetch.MongoDB('brands');
-                            console.log(Object(item[fieldName]));
-                            console.log(item[fieldName].$ref);
+                            let dbref = item[fieldName];
+
+
+                            console.log(dbref.$id);
                             const result = await mdb.getOne({_id: item[fieldName].$id}, []);
-                            console.log(result);
                         }
                         
                         getSim();

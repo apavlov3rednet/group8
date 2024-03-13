@@ -79,7 +79,7 @@ app.post('/api/:CollectionName/', async (req, res) => {
     const result = await mdb.setValue(req.body);
 
     if(result.acknowledged) {
-        let newUrl = config.fullClient + "/?id=" + String(result.insertedId);
+        let newUrl = config.fullClient + "?id=" + String(result.insertedId);
         res.redirect(newUrl);
     }
 });

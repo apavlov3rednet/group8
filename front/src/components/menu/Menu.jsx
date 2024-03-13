@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import config from "../../params/config.js";
+import './style.css';
 
-export default function Menu() {
+export default function Menu({ curPath }) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -23,7 +24,7 @@ export default function Menu() {
         <menu>
             {
                 !loading && data.map((menuElement) => (
-                    <li key={menuElement._id}><a href={menuElement.LINK}>{menuElement.NAME}</a></li>
+                    <li className={curPath === menuElement.LINK ? 'selected' : null} key={menuElement._id}><a href={menuElement.LINK}>{menuElement.NAME}</a></li>
                 ))
             }
         </menu>

@@ -1,5 +1,7 @@
 import { ObjectId } from "mongodb";
 import schema from "../schema/index.js";
+import MongoDB from "./MongoDB.js";
+import Fetch from "../index.js";
 
 export default class Controll {
 
@@ -55,9 +57,21 @@ export default class Controll {
                 for(let fieldName in schema) {
                     let fieldSchema = schema[fieldName];
                     let newData = (item[fieldName]) ? item[fieldName] : fieldSchema.default;
-                    newRow[fieldName] = newData;
+                    if(fieldSchema.type != 'DBRef') {
+                        newRow[fieldName] = newData;
+                    }
+                    else {
+                        async function getSim() {
+                            let mdb = new Fetch.MongoDB('brands');
+                            console.log(Object(item[fieldName]));
+                            console.log(item[fieldName].$ref);
+                            const result = await mdb.getOne({_id: item[fieldName].$id}, []);
+                            console.log(result);
+                        }
+                        
+                        getSim();
+                    }
                 }
-
                 result.push(newRow);
             });
         }

@@ -5,7 +5,7 @@ import './style.css';
 export default function Form({nameForm, arValue}) {
     const [schema, setSchema] = useState(null);
     const [formValue, setFormValue] = useState(arValue);
-    const url = config.fullApi + nameForm + '/';
+    const [url, setUrl] = useState(config.fullApi + nameForm + '/');
 
     useEffect(
         () => {
@@ -14,6 +14,7 @@ export default function Form({nameForm, arValue}) {
                 const answer = await response.json();
                 setSchema(answer);
               }
+              setUrl(config.fullApi + nameForm + '/');
               fetchData();
               setFormValue(arValue);
         }, [nameForm, arValue]

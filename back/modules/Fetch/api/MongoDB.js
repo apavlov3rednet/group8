@@ -111,6 +111,8 @@ export default class MongoDB {
         if(pageCount)
             options.skip = pageCount;
 
+            console.log(filter);
+
         let unPreparedData = await this.collection.find(filter, { query, ...options } ).toArray();
 
         let data = Controll.prepareData(unPreparedData, this.schema);
@@ -119,6 +121,10 @@ export default class MongoDB {
             head: this.schema,
             data: data
         };
+    }
+
+    async getOne(filter = {}) {
+        return await this.collection.findOne(filter);
     }
 
     static isJson(value) {

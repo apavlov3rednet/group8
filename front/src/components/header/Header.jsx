@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState} from 'react';
+import { useEffect, useState} from 'react';
 import Logo from '../../images/logo.png';
 import Menu from '../menu/Menu';
 import './style.css';
 
-export default function Header({ ...props }) {
+export default function Header({ curPath }) {
     /**
      * Правила работы со стейтами
      * 1. Нельзя писать вне компонента
@@ -33,7 +33,7 @@ export default function Header({ ...props }) {
                 <h1>Single Page Application</h1>
             </div>
             
-            <Menu />
+            <Menu curPath={curPath}/>
 
             <div className="timer">
                 Текущее время: { now.toLocaleTimeString() } 

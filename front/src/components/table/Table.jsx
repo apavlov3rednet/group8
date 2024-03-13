@@ -3,20 +3,6 @@ import config from '../../params/config.js';
 import './style.css';
 
 export default function Table({nameTable, onChange}) {
-    // const Header = function() {
-    //     let firstRow = children[0];
-    //     let headerCol = [];
-
-    //     for(let index in firstRow) {
-    //         let col = firstRow[index];
-    //         headerCol.push(index);
-    //     } 
-        
-    //     headerCol.forEach((item, index) => {
-    //         <th key={index}> {item} </th>
-    //     })
-    // }
-
     const [table, setTable] = useState({
         header: [],
         body: [],
@@ -38,7 +24,7 @@ export default function Table({nameTable, onChange}) {
 
         setTable(data);
         setLoading(false);
-    }, [nameTable]);
+    }, [nameTable, onChange]);
 
     useEffect(
         () => {fetchTable()}, [fetchTable]

@@ -1,37 +1,31 @@
 import Header from './components/header/Header.jsx';
 import './App.css';
 import Container from './components/container/Container.jsx';
-
-//const serverAddr = 'http://localhost:8000/';
-//const PORT = 3000;
+import Route from './modules/Route.js';
+import { useState, useEffect, useCallback} from 'react';
 
 function App() {
-  // const [loading, setLoading] = useState(false);
-  // const [data, setData] = useState({
-  //   menu: {},
-  //   table: {},
-  //   form: {}
-  // });
 
-  // const serverResponse = useCallback(async () => {
-  //   setLoading(true);
-  //   const response = await fetch(serverAddr);
-  //   const srData = await response.json();
+  /**
+   * permanent state required
+   * components: Header, Menu, Container, Table, Form
+   */
+  let [currentPath, setCurrentPath] = useState('index');
 
-  //   setData(srData);
-  //   setLoading(false);
-  // }, []);
+  const setPath = useCallback(async () => {
+    let r = new Route();
+    setCurrentPath(r.getUrl());
+  }, []);
 
-  // useEffect(() => {
-  //   serverResponse();
-  //   }, [serverResponse]
-  // )
+  useEffect(
+    () => {setPath()}, [setPath]
+  )
 
   return (
     <div className="App">
-      <Header />
+      <Header curPath={currentPath}/>
 
-      <Container></Container>
+      <Container curPath={currentPath}></Container>
       
     </div>
   );

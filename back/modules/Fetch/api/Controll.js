@@ -36,6 +36,11 @@ export default class Controll {
                         case 'String':
                             data[i] = String(checkElement);
                         break;
+
+                        case 'DBRef':
+                            let value = new DBRef(checkSchema.collection, new ObjectId(checkElement));
+                            data[i] = value;
+                        break;
                     }
                 }
                 else {
@@ -57,20 +62,20 @@ export default class Controll {
                 for(let fieldName in schema) {
                     let fieldSchema = schema[fieldName];
                     let newData = (item[fieldName]) ? item[fieldName] : fieldSchema.default;
-                    if(fieldSchema.type != 'DBRef') {
-                        newRow[fieldName] = newData;
-                    }
-                    else {
-                        async function getSim() {
-                            let mdb = new Fetch.MongoDB('brands');
-                            let dbref = item[fieldName];
+                    if(fieldSchema.type === 'DBRef') {
+                        let dbref = item[fieldName];
 
-
-                            console.log(dbref.$id);
-                            const result = await mdb.getOne({_id: item[fieldName].$id}, []);
+                        if(dbref.collection) {
+                            newRow[fieldName] = {
+                                ref: true,
+                                collectionName: dbref.collection,
+                                _id: String(dbref.oid)
+                            }
                         }
                         
-                        getSim();
+                    }
+                    else {
+                        newRow[fieldName] = newData;
                     }
                 }
                 result.push(newRow);

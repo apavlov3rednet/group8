@@ -12,6 +12,16 @@ export default function Form({nameForm, arValue}) {
             async function fetchData() {
                 const response = await fetch(config.fullApi + 'schema/get/' + nameForm + '/');
                 const answer = await response.json();
+                
+                for(let key in answer) {
+                    let element = answer[key];
+            
+                    if(element.type === 'DBRef') {
+                        let mdb =  await fetch(config.fullApi + element.collection + '/');
+                        let ar  = await mdb.json();  
+                        answer[key].arList = ar.data;
+                    }
+                }
                 setSchema(answer);
               }
               setUrl(config.fullApi + nameForm + '/');
@@ -19,6 +29,21 @@ export default function Form({nameForm, arValue}) {
               setFormValue(arValue);
         }, [nameForm, arValue]
     );
+
+    function renderSelect(ar) {
+        let list = ar.arList;
+
+        return (
+            <>
+                <option key={0} value={0}>Выбери бренд</option>
+                {
+                list.map(item => (
+                    <option key={item._id} value={item._id}>{item.TITLE}</option>
+                ))
+                }
+            </>
+        )
+    }
 
     function renderForm(data = {}, ar = {}) {
         let formElements = [];
@@ -30,27 +55,39 @@ export default function Form({nameForm, arValue}) {
             switch(newRow.type) {
                 case 'String':
                     newRow.fieldType = 'text';
+                    newRow.field = 'field';
                 break;
 
                 case 'Number':
                     newRow.fieldType = 'number';
+                    newRow.field = 'field';
                 break;
 
                 case 'Phone':
                     newRow.fieldType = 'tel';
+                    newRow.field = 'field';
                 break;
 
                 case 'Email':
                     newRow.fieldType = 'email';
+                    newRow.field = 'field';
                 break;
 
                 case 'Password':
                     newRow.fieldType = 'password';
+                    newRow.field = 'field';
+                break;
+
+                case 'DBRef':
+                    newRow.fieldType = 'select';
+                    newRow.field = 'select';
+                    newRow.list = renderSelect(newRow);
                 break;
 
                 case 'Hidden':
                 default:
                     newRow.fieldType = 'hidden';
+                    newRow.field = 'field';
                 break;
             }
 
@@ -63,11 +100,13 @@ export default function Form({nameForm, arValue}) {
                     formElements.map((item, index) => (
                         <label key={index} htmlFor={item.code}>
                             <span>{item.loc} {item.require && '*'}</span>
-                            <input name={item.code} 
+                            { item.field === 'field' &&  <input name={item.code} 
                             required={item.require && true}
                             defaultValue={item.value && item.value }
                             step={(item.fieldType === 'number') ? '1000' : null}
-                            type={item.fieldType} />
+                            type={item.fieldType} /> }
+
+                            { item.field === 'select' && <select name={item.code}>{item.list}</select>}
                         </label>
                     ))
                 }

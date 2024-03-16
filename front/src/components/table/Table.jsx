@@ -6,7 +6,8 @@ export default function Table({nameTable, onChange}) {
     const [table, setTable] = useState({
         header: [],
         body: [],
-        footer: []
+        footer: [],
+        sim: []
     });
 
     const [loading, setLoading] = useState(false);
@@ -15,11 +16,11 @@ export default function Table({nameTable, onChange}) {
         setLoading(true);
         const response = await fetch(config.fullApi + nameTable +'/');
         const unPreparedData = await response.json();
-
         const data = {
             header: unPreparedData.head,
             body: unPreparedData.data,
-            footer: []
+            footer: [],
+            sim: unPreparedData.sim
         };
 
         setTable(data);
@@ -53,6 +54,24 @@ export default function Table({nameTable, onChange}) {
                     ))
                 }
             </tr>
+        )
+    }
+
+    function getContent(col, index, sim) {
+        let value = '';
+
+        if(col.ref) {
+            let val = sim[col.collectionName].filter(item => item._id === col._id)[0];
+            value = val.TITLE;
+        }
+        else {
+            value = col;
+        }
+
+        return (
+            <td key={index}>
+                {value && value}
+            </td>
         )
     }
 
@@ -90,9 +109,7 @@ export default function Table({nameTable, onChange}) {
                         <tr key={row._id} id={row._id}>
                             {
                                 Object.values(row).map((col, index) => (
-                                    <td key={index}>
-                                        {col}
-                                    </td> 
+                                    getContent(col, index, table.sim)
                                 ))
                             }
                             <td>

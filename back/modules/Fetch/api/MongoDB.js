@@ -116,11 +116,46 @@ export default class MongoDB {
         let unPreparedData = await this.collection.find(filter, { query, ...options } ).toArray();
 
         let data = Controll.prepareData(unPreparedData, this.schema);
+        let simId = {};
+        let sim = {};
+
+        data.forEach(item => {
+            for(let i in item) {
+                let keyElement = item[i];
+
+                if(keyElement.ref) {
+                    if(!simId[keyElement.collectionName])
+                        simId[keyElement.collectionName] = [];
+
+                    simId[keyElement.collectionName].push(new ObjectId(keyElement._id));
+                }
+            }
+        });
+
+        if(Object.keys(simId).length > 0) {
+            for(let collection in simId) {
+                let mdb = new MongoDB(collection);
+                let ids = simId[collection];
+
+                sim[collection] = await mdb.collection.find({
+                    _id: { $in : ids }
+                }).toArray();
+            }
+        }
+
+        //array_unique();
+        //[1,2,3,4,4,5,6,7,7,8,8] 
+        //[1,2,3,4,5,6,7,8]
 
         return {
             head: this.schema,
-            data: data
+            data: data,
+            sim: sim
         };
+    }
+
+    async getByIds(ar = []) {
+
     }
 
     async getOne(filter = {}) {

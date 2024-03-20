@@ -6,6 +6,7 @@ export default function Form({nameForm, arValue}) {
     const [schema, setSchema] = useState(null);
     const [formValue, setFormValue] = useState(arValue);
     const [url, setUrl] = useState(config.fullApi + nameForm + '/');
+    const [edit, setEdit] = useState(false);
 
     useEffect(
         () => {
@@ -26,19 +27,25 @@ export default function Form({nameForm, arValue}) {
               }
               setUrl(config.fullApi + nameForm + '/');
               fetchData();
-              setFormValue(arValue);
-        }, [nameForm, arValue]
+              
+              if(arValue) {
+                setFormValue(arValue);
+                setEdit(true);
+              }
+              
+        }, [nameForm, arValue, edit]
     );
 
     function renderSelect(ar) {
         let list = ar.arList;
+        let value = ar.value._id;
 
         return (
             <>
-                <option key={0} value={0}>Выбери бренд</option>
+                <option key={0} value={0}>Выбери...</option>
                 {
                 list.map(item => (
-                    <option key={item._id} value={item._id}>{item.TITLE}</option>
+                    <option selected={value === item._id} key={item._id} value={item._id}>{item.TITLE}</option>
                 ))
                 }
             </>
@@ -47,11 +54,13 @@ export default function Form({nameForm, arValue}) {
 
     function renderForm(data = {}, ar = {}) {
         let formElements = [];
+
         for(let i in data) {
             let newRow = data[i];
 
             newRow.code = i;
             newRow.value = (ar[i]) ? ar[i] : '';
+
             switch(newRow.type) {
                 case 'String':
                     newRow.fieldType = 'text';
@@ -114,11 +123,31 @@ export default function Form({nameForm, arValue}) {
         );
     }
 
+    function clearForm(e) {
+        e.preventDefault();
+
+        let formElements = e.target.closest('form').querySelectorAll('input, select, textarea'); //querySelector
+
+        formElements.forEach(item => {
+            if(item.tagName === 'SELECT') {
+                item.value = 0;
+            }
+            else {
+                item.value = '';
+            }
+        });
+        setEdit(false);
+    }
+
     return (
         <form method='POST' action={url}>
             { renderForm(schema, formValue) }
 
-            <button>Сохранить</button>
+            <button>
+                {edit && 'Изменить'}
+                {!edit && 'Сохранить'}
+            </button>
+            <button onClick={clearForm}>Сбросить</button>
         </form>
     )
 }

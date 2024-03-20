@@ -57,6 +57,41 @@ export default function Table({nameTable, onChange}) {
         )
     }
 
+    // function getRow(row, schema) {
+    //     let content = [];
+
+    //     for(let fieldName in row) {
+    //         let el = row[fieldName];
+    //         let schemaType = schema[fieldName].type;
+    //         let value, prefix;
+
+    //         switch(schemaType) {
+    //             default: 
+    //                 value = el;
+    //             break;
+
+    //             case 'Phone':
+    //                 prefix = 'tel:' + el;
+    //                 value = <a href={prefix}>{el}</a>;
+    //             break;
+
+    //             case 'Email':
+    //                 prefix = 'mailto:' + el;
+    //                 value = <a href={prefix}>{el}</a>
+    //             break;
+    //         }
+    //     }
+
+    //     console.log(content);
+        
+
+    //     return (
+    //         <>
+    //             {}
+    //         </>
+    //     )
+    // }
+
     function getContent(col, index, sim) {
         let value = '';
 
@@ -107,7 +142,7 @@ export default function Table({nameTable, onChange}) {
                 {
                     !loading && table.body.map(row => (
                         <tr key={row._id} id={row._id}>
-                            {
+                            { 
                                 Object.values(row).map((col, index) => (
                                     getContent(col, index, table.sim)
                                 ))

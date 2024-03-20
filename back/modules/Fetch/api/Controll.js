@@ -33,7 +33,10 @@ export default class Controll {
                             data[i] = parseFloat(checkElement);
                         break;
 
+                        default:
                         case 'String':
+                            case 'Phone':
+                                case 'Email':
                             data[i] = String(checkElement);
                         break;
 

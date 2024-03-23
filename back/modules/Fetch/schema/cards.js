@@ -1,6 +1,6 @@
 const cards = {
     _id: {},
-    GOS_ZNAK: {
+    TITLE: {
         type: 'String',
         require: true,
         default: 'none',

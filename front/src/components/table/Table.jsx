@@ -92,7 +92,7 @@ export default function Table({nameTable, onChange}) {
     //     )
     // }
 
-    function getContent(col, index, sim) {
+    function getContent(col, index, sim, schema) {
         let value = '';
 
         if(col.ref) {
@@ -101,6 +101,26 @@ export default function Table({nameTable, onChange}) {
         }
         else {
             value = col;
+
+            let getIndex = 0;
+            let curSchema = 0;
+
+            for(let i in schema) {
+                if(getIndex === index) {
+                    curSchema = schema[i]
+                }
+                getIndex++;
+            }
+
+            if(curSchema.type === 'Phone') {
+                let callTo = 'tel:' + col;
+                value = <a href={callTo}>{col}</a>
+            }
+
+            if(curSchema.type === 'Email') {
+                let mailTo = 'mailto:' + col;
+                value = <a href={mailTo}>{col}</a>
+            }
         }
 
         return (
@@ -144,7 +164,7 @@ export default function Table({nameTable, onChange}) {
                         <tr key={row._id} id={row._id}>
                             { 
                                 Object.values(row).map((col, index) => (
-                                    getContent(col, index, table.sim)
+                                    getContent(col, index, table.sim, table.header)
                                 ))
                             }
                             <td>

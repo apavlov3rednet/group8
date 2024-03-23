@@ -40,6 +40,11 @@ export default class Controll {
                             data[i] = String(checkElement);
                         break;
 
+                        case "Date":
+                            console.log('data', checkElement);
+                            data[i] = new Date(checkElement)
+                        break;
+
                         case 'DBRef':
                             let value = new DBRef(checkSchema.collection, new ObjectId(checkElement));
                             data[i] = value;

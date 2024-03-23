@@ -1,12 +1,18 @@
 import {useState, useEffect} from 'react';
 import config from '../../params/config.js';
+import InputMask from 'react-input-mask';
+import DatePicker from "react-datepicker";
+
 import './style.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Form({nameForm, arValue}) {
     const [schema, setSchema] = useState(null);
-    const [formValue, setFormValue] = useState(arValue);
+    const [formValue, setFormValue] = useState({});
     const [url, setUrl] = useState(config.fullApi + nameForm + '/');
     const [edit, setEdit] = useState(false);
+    const [disabled, setDisabled] = useState(true);
+    const [startDate, setStartDate] = useState(new Date());
 
     useEffect(
         () => {
@@ -28,12 +34,13 @@ export default function Form({nameForm, arValue}) {
               setUrl(config.fullApi + nameForm + '/');
               fetchData();
               
-              if(arValue) {
+              if(Object.keys(arValue).length > 0) {
                 setFormValue(arValue);
                 setEdit(true);
+                setDisabled(false);
               }
               
-        }, [nameForm, arValue, edit]
+        }, [nameForm, arValue]
     );
 
     function renderSelect(ar) {
@@ -74,7 +81,7 @@ export default function Form({nameForm, arValue}) {
 
                 case 'Phone':
                     newRow.fieldType = 'tel';
-                    newRow.field = 'field';
+                    newRow.field = 'tel';
                 break;
 
                 case 'Email':
@@ -93,6 +100,11 @@ export default function Form({nameForm, arValue}) {
                     newRow.list = renderSelect(newRow);
                 break;
 
+                case 'Date':
+                    newRow.fieldType = 'date';
+                    newRow.field = 'date';
+                break;
+
                 case 'Hidden':
                 default:
                     newRow.fieldType = 'hidden';
@@ -109,13 +121,36 @@ export default function Form({nameForm, arValue}) {
                     formElements.map((item, index) => (
                         <label key={index} htmlFor={item.code}>
                             <span>{item.loc} {item.require && '*'}</span>
-                            { item.field === 'field' &&  <input name={item.code} 
-                            required={item.require && true}
-                            defaultValue={item.value && item.value }
-                            step={(item.fieldType === 'number') ? '1000' : null}
-                            type={item.fieldType} /> }
+                            { 
+                                item.field === 'field' &&  <input name={item.code} 
+                                    required={item.require && true}
+                                    defaultValue={item.value && item.value }
+                                    step={(item.fieldType === 'number') ? item.step : null}
+                                    type={item.fieldType} /> 
+                            }
 
-                            { item.field === 'select' && <select name={item.code}>{item.list}</select>}
+                            { 
+                                item.field === 'select' && <select name={item.code}>{item.list}</select>
+                            }
+
+                            { 
+                                item.field === 'tel' && <InputMask 
+                                    name={item.code}
+                                    required={item.require && true} 
+                                    defaultValue={item.value && item.value }
+                                    mask="+7(999)-999-99-99" 
+                                    maskChar="_" />
+                            }
+
+                            {
+                                item.field === 'date' && <DatePicker 
+                                    selected={startDate} 
+                                    dateFormat="dd.MM.yyyy"
+                                    name={item.code}
+                                    defaultValue={item.value && item.value }
+                                    required={item.require && true} 
+                                    onChange={(date) => setStartDate(date)} />
+                            }
                         </label>
                     ))
                 }
@@ -126,24 +161,41 @@ export default function Form({nameForm, arValue}) {
     function clearForm(e) {
         e.preventDefault();
 
-        let formElements = e.target.closest('form').querySelectorAll('input, select, textarea'); //querySelector
+        // let formElements = e.target.closest('form').querySelectorAll('input, select, textarea'); //querySelector
 
+        // formElements.forEach(item => {
+        //     if(item.tagName === 'SELECT') {
+        //         item.value = 0;
+        //     }
+        //     else {
+        //         item.value = '';
+        //     }
+        // });
+        setFormValue({});
+        renderForm(schema, {});
+        setEdit(false);
+        setDisabled(true);
+    }
+
+    function checkRequired(e) {
+        let formElements = e.target.closest('form').querySelectorAll('input, select, textarea'); //querySelector
+        let error = 0;
         formElements.forEach(item => {
-            if(item.tagName === 'SELECT') {
-                item.value = 0;
-            }
-            else {
-                item.value = '';
+            if(item.required === true && (item.value == "0" || item.value === '')) {
+                setDisabled(true);
+                error++;
             }
         });
-        setEdit(false);
+
+        if(error === 0)
+            setDisabled(false);
     }
 
     return (
-        <form method='POST' action={url}>
+        <form method='POST' action={url} onChange={checkRequired}>
             { renderForm(schema, formValue) }
 
-            <button>
+            <button disabled={disabled && disabled}>
                 {edit && 'Изменить'}
                 {!edit && 'Сохранить'}
             </button>

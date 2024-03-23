@@ -2,7 +2,7 @@ const models = {
     _id: {},
     BRAND: {
         type: 'DBRef',
-        require: false,
+        require: true,
         default: 'none',
         loc: "Бренд",
         sort: true,

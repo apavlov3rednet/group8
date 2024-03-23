@@ -75,7 +75,6 @@ app.get('/api/schema/get/:Schema/', async (req, res) => {
 app.post('/api/:CollectionName/', async (req, res) => {
     const collectionName = req.params.CollectionName.toLowerCase();
     const mdb = new Fetch.MongoDB(collectionName);
-
     const result = await mdb.setValue(req.body);
 
     if(result.acknowledged) {

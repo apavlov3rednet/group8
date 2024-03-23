@@ -30,7 +30,8 @@ const brands = {
         default: 0,
         loc: "Годовой бюджет ($)",
         sort: true,
-        editable: true
+        editable: true,
+        step: null,
     },
 };
 

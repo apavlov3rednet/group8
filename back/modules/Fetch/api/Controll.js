@@ -41,8 +41,8 @@ export default class Controll {
                         break;
 
                         case "Date":
-                            console.log('data', checkElement);
-                            data[i] = new Date(checkElement)
+                            let d = checkElement.split('.');
+                            data[i] = new Date(d[2], d[1]-1, d[0]);
                         break;
 
                         case 'DBRef':

@@ -121,6 +121,11 @@ export default function Table({nameTable, onChange}) {
                 let mailTo = 'mailto:' + col;
                 value = <a href={mailTo}>{col}</a>
             }
+
+            if(curSchema.type === 'Date') {
+                let date = new Date(col);
+                value = Intl.DateTimeFormat('ru').format(date);
+            }
         }
 
         return (

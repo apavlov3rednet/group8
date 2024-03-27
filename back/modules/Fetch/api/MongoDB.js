@@ -9,14 +9,18 @@ export default class MongoDB {
     static #LOGIN; //логин
     static #PSSWD; //пароль
 
-    constructor(collectionName) {
+    constructor(collectionName = '') {
         console.log('start DB connect');
         const url = [MongoDB.#LOCATION, MongoDB.#PORT].join(":") + '/'; //mongodb://localhost:12017
         this.client = new MongoClient(url);
         this.db = this.client.db(MongoDB.#DBNAME);
-        this.collection = this.db.collection(collectionName);
-        this.schema = Schema[collectionName];
-        this.controll = new Controll(collectionName);
+
+        if(collectionName != '') {
+            this.collection = this.db.collection(collectionName);
+            this.schema = Schema[collectionName];
+            this.controll = new Controll(collectionName);
+        }
+        
         console.log('DB connect');
     }
 
@@ -62,7 +66,14 @@ export default class MongoDB {
         return false;
     }
 
+    async getCollections() {
+        console.log(await this.db.listCollections().toArray());
+    }
+
     async setValue(props = {}) {
+        if(!this.collection)
+            return {};
+
         let id = 0;
         let controllData = this.controll.preparePost(props);
 
@@ -80,6 +91,8 @@ export default class MongoDB {
     }
 
     async removeValue(id) {
+        if(!this.collection)
+            return {};
         await this.collection.deleteOne({_id : new ObjectId(id)});
     }
 
@@ -94,6 +107,9 @@ export default class MongoDB {
     }
 
     async getValue(filter = {}, select = [], limit = false, pageCount = false) {
+        if(!this.collection)
+            return {};
+
         let query = [];
         let options = {};
 
@@ -159,6 +175,8 @@ export default class MongoDB {
     }
 
     async getOne(filter = {}) {
+        if(!this.collection)
+            return {};
         return await this.collection.findOne(filter);
     }
 

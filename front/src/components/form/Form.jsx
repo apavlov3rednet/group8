@@ -6,6 +6,10 @@ import DatePicker from "react-datepicker";
 import './style.css';
 import "react-datepicker/dist/react-datepicker.css";
 
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import { ru } from 'date-fns/locale/ru';
+registerLocale('ru-RU', ru);
+
 export default function Form({nameForm, arValue}) {
     const [schema, setSchema] = useState(null);
     const [formValue, setFormValue] = useState({});
@@ -125,6 +129,8 @@ export default function Form({nameForm, arValue}) {
                                 item.field === 'field' &&  <input name={item.code} 
                                     required={item.require && true}
                                     defaultValue={item.value && item.value }
+                                    onChange={item.sim && callMethod}
+                                    readOnly={item.readOnly}
                                     step={(item.fieldType === 'number') ? item.step : null}
                                     type={item.fieldType} /> 
                             }
@@ -149,6 +155,7 @@ export default function Form({nameForm, arValue}) {
                                     name={item.code}
                                     defaultValue={item.value && item.value }
                                     required={item.require && true} 
+                                    locale='ru-RU'
                                     onChange={(date) => setStartDate(date)} />
                             }
                         </label>
@@ -189,6 +196,34 @@ export default function Form({nameForm, arValue}) {
 
         if(error === 0)
             setDisabled(false);
+    }
+
+    function callMethod(event) {
+        console.log(event);
+        let form = event.target.closest('form');
+        let name = event.target.name;
+        let obSchema = schema;
+        let curSchemaSim = obSchema[name].sim;
+
+        if(curSchemaSim) {
+            let total = form.querySelector('input[name='+curSchemaSim+']');
+            let value = 0;
+            let method = obSchema[curSchemaSim].method;
+            let arSimFields = obSchema[curSchemaSim].fields;
+            let arFields = [];
+
+            arSimFields.forEach(item => {
+                arFields.push(form.querySelector('input[name='+item+']'));
+            });
+
+            switch (method) {
+                case 'MULTIPLY':
+                    value = arFields[0].value * arFields[1].value;
+                break;
+            }
+
+            total.value = value;
+        }
     }
 
     return (

@@ -29,7 +29,6 @@ export default class MongoDB {
             if(collectionName != '') {
                 const collection = this.db.collection(collectionName);
                 const count = await collection.countDocuments();
-                console.log(count);
                 return count;
             }
             else {
@@ -64,10 +63,6 @@ export default class MongoDB {
         }
 
         return false;
-    }
-
-    async getCollections() {
-        console.log(await this.db.listCollections().toArray());
     }
 
     async setValue(props = {}) {
@@ -188,5 +183,38 @@ export default class MongoDB {
         }
 
         return true;
+    }
+
+    /**
+     * Отложенный сбор информации о всех коллекциях
+     * @returns 
+     */
+    async getCollectionsStats() { //перечень имен коллекций
+        let result = [];
+        let sources = await this.db.listCollections().toArray();
+
+        for (const source of sources) {
+            const mdb = new MongoDB(source.name);
+            const data = await mdb.getCollectionInfo();
+            result.push(data);
+        }
+
+        return result;
+    }
+
+    /**
+     * Отложенный сбор информации одной коллекции
+     * @returns 
+     */
+    async getCollectionInfo() {
+        let _this = this;
+
+        return new Promise(async resolve => {
+            resolve({
+                TITLE: _this.collection.namespace,
+                INDEXES: (await _this.collection.indexes()).length,
+                DOCUMENTS: await _this.collection.countDocuments()
+            });
+        });
     }
 }

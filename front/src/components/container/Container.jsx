@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import Form from "../form/Form.jsx";
 import Table from "../table/Table.jsx";
 import Index from '../index/Index.jsx';
+import HeaderTag from "../headertag/HeaderTag.jsx";
 
 export default function Container({ curPath }) 
 {
@@ -26,6 +27,10 @@ export default function Container({ curPath })
 
     return (
         <div className='container'>
+            <h1>
+                {!collectionName && 'Главная'}
+                {collectionName && <HeaderTag name={collectionName}/>}
+            </h1>
             { collectionName && <Form arValue={row} nameForm={collectionName}/> }
             { collectionName && <Table onChange={handleUpdateRow} nameTable={collectionName}/>}
             

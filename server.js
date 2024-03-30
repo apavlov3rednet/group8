@@ -61,8 +61,9 @@ app.get('/api/:CollectionName/', async (req, res) => {
 
 app.get('/api/collections/get/', async (req, res) => {
     let mdb = new Fetch.MongoDB();
-    let result = await mdb.getCollections();
-    res.end();
+    await mdb.getCollectionsStats().then(result => {
+        res.end(JSON.stringify(result));
+    });
 });
 
 //DELETE methods

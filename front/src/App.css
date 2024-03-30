@@ -40,6 +40,11 @@
 
 .container {
   display:flex;
+  flex-wrap: wrap;
   gap: 15px;
   padding:0 30px;
+}
+
+.container h1 {
+  width:100%;
 }

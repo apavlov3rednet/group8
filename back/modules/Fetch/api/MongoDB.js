@@ -101,30 +101,29 @@ export default class MongoDB {
         return result;
     }
 
-    async getValue(filter = {}, select = [], limit = false, pageCount = false) {
+    async getValue(options = {}) {
         if(!this.collection)
             return {};
+        
+        let filter = options.filter ? options.filter : {};
 
-        let query = [];
-        let options = {};
-
-        if(select.length > 0) {
-            let arSelect = {};
-            for (let key of select) {
-                arSelect[key] = 1;
+        if(options.search && options.search.length > 2) {
+            let query = new RegExp(options.search, 'i');
+            filter = {
+                TITLE: { $regex : query }
             }
-            query.push(arSelect); //request = [filter, arSelect]
+
+            // filter = {
+            //     $or: [
+            //         {TITLE: { $regex : query }},
+            //         {PARENT_COMPANY: { $regex : query }}
+            //     ]
+            // }
         }
 
-        if(limit)
-            options.limit = limit;
+        console.log(filter);
 
-        if(pageCount)
-            options.skip = pageCount;
-
-            console.log(filter);
-
-        let unPreparedData = await this.collection.find(filter, { query, ...options } ).toArray();
+        let unPreparedData = await this.collection.find(filter).toArray();
 
         let data = Controll.prepareData(unPreparedData, this.schema);
         let simId = {};
@@ -153,10 +152,6 @@ export default class MongoDB {
                 }).toArray();
             }
         }
-
-        //array_unique();
-        //[1,2,3,4,4,5,6,7,7,8,8] 
-        //[1,2,3,4,5,6,7,8]
 
         return {
             head: this.schema,

@@ -41,20 +41,20 @@ app.use(express.urlencoded({extended: true}));
 
 //GET requests
 app.get('/api/:CollectionName/', async (req, res) => {
-    let result = {},
-        mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase()),
-        filter = {},
-        select = [],
-        limit = req.query.limit ? req.query.limit : false,
-        skip = req.query.skip ? req.query.skip : false;
+    let mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase());
+    let options = {};
 
     if(req.query) {
         if(req.query.id) {
-            filter._id = new ObjectId(req.query.id);
+            options.filter._id = new ObjectId(req.query.id);
+        }
+
+        if(req.query.q) {
+            options.search = req.query.q;
         }
     }
 
-    result = await mdb.getValue(filter, select, limit, skip);
+    let result = await mdb.getValue(options);
 
     res.end(JSON.stringify(result));
 });

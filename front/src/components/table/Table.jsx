@@ -2,7 +2,7 @@ import {useState, useCallback, useEffect} from 'react';
 import config from '../../params/config.js';
 import './style.css';
 
-export default function Table({nameTable, onChange}) {
+export default function Table({nameTable, onChange, query = ''}) {
     const [table, setTable] = useState({
         header: [],
         body: [],
@@ -10,11 +10,19 @@ export default function Table({nameTable, onChange}) {
         sim: []
     });
 
+    console.log(query);
+
     const [loading, setLoading] = useState(false);
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
-        const response = await fetch(config.fullApi + nameTable +'/');
+        let urlRequest = config.fullApi + nameTable +'/';
+
+        if(query != '') {
+            urlRequest += '?q=' + query;
+        }
+
+        const response = await fetch(urlRequest);
         const unPreparedData = await response.json();
         const data = {
             header: unPreparedData.head,

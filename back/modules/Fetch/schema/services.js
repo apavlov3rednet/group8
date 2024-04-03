@@ -6,7 +6,8 @@ const services = {
         default: 'none',
         loc: "Наименование услуги",
         sort: true,
-        editable: true
+        editable: true,
+        searchable: true
     },
     DATE: {
         type: 'Date',

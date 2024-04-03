@@ -8,7 +8,12 @@ export default function Index() {
         body: []
     });
 
-    const [pie, setPie] = useState({});
+    const [pie, setPie] = useState({
+        labels: [],
+        numbers: [],
+        indexes: [],
+        count: 1
+    });
 
     const [loading, setLoading] = useState(false);
 
@@ -19,15 +24,19 @@ export default function Index() {
 
         let labels = [];
         let numbers = [];
+        let indexes = [];
 
         unPreparedData.forEach(item => {
             labels.push(item.TITLE.split('.')[1]);
             numbers.push(item.DOCUMENTS);
+            indexes.push(item.INDEXES);
         })
 
         setPie({
             labels: labels,
-            numbers: numbers
+            numbers: numbers,
+            indexes: indexes,
+            count: labels.length
         })
 
         setTable({
@@ -38,7 +47,33 @@ export default function Index() {
 
     useEffect(
         () => {fetchTable()}, [fetchTable]
-    )
+    );
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    };
+
+    function getColors(count) {
+        if(count > 0) {
+            let arColors = [];
+            let arColorCode = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+            //rgb(255,255,255);
+            //hex #00000000
+
+            for(let j = 0; j < count; j++) {
+                let color = "#";
+
+                for(let i = 0; i < 6; i++) {
+                    color += arColorCode[getRandomInt(arColorCode.length)];
+                }
+
+                arColors.push(color);
+            }
+
+            return arColors;
+        }
+    }
 
     return (
         <>
@@ -58,7 +93,7 @@ export default function Index() {
                         <tr key={index}>
                             { 
                                 Object.values(row).map((col, key) => (
-                                    <td>{col}</td>
+                                    <td key={key}>{col}</td>
                                 ))
                             }
                         </tr>
@@ -67,6 +102,8 @@ export default function Index() {
             </tbody>
         </table>
 
+        <div>
+            <h3>Документы</h3>
         <CChart
             type="polarArea"
             data={{
@@ -74,7 +111,7 @@ export default function Index() {
                 datasets: [
                 {
                     data: pie.numbers,
-                    backgroundColor: ['#FF6384', '#4BC0C0', '#FFCE56', '#E7E9ED', '#36A2EB', '#36CFEB'],
+                    backgroundColor: getColors(pie.count),
                 },
                 ],
             }}
@@ -95,6 +132,32 @@ export default function Index() {
                 }
             }}
             />
+            </div>
+
+            <div>
+                <h3>Индексы</h3>
+                <CChart
+                    type="doughnut"
+                    data={{
+                        labels: pie.labels,
+                        datasets: [
+                        {
+                            backgroundColor: getColors(pie.count),
+                            data: pie.indexes,
+                        },
+                        ],
+                    }}
+                    options={{
+                        plugins: {
+                        legend: {
+                            labels: {
+                            //color: getStyle('--cui-body-color'),
+                            }
+                        }
+                        },
+                    }}
+                    />
+            </div>
         </>
     )
 }

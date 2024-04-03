@@ -1,0 +1,13 @@
+.searchPanel {
+    width: 100%;
+    margin:10px 0;
+}
+
+.searchPanel label {}
+.searchPanel label input {
+    border:1px solid #eee;
+    padding:10px 15px 10px 40px;
+    line-height: 36px;
+    width: calc(100% - 60px);
+    background: url('./images/search.png') no-repeat 10px 16px;
+}

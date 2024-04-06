@@ -6,7 +6,8 @@ const brands = {
         default: 'none',
         loc: "Название",
         sort: true,
-        editable: true
+        editable: true,
+        searchable: true,
     },
     COUNTRY: {
         type: 'String',
@@ -14,7 +15,8 @@ const brands = {
         default: 'none',
         loc: "Страна",
         sort: true,
-        editable: true
+        editable: true,
+        searchable: true,
     },
     PARENT_COMPANY: {
         type: 'String',
@@ -22,7 +24,8 @@ const brands = {
         default: 'none',
         loc: "Владеющая компания",
         sort: true,
-        editable: true
+        editable: true,
+        searchable: true,
     },
     BUDGET: {
         type: 'Number',
@@ -31,7 +34,8 @@ const brands = {
         loc: "Годовой бюджет ($)",
         sort: true,
         editable: true,
-        step: null,
+        step: 100000,
+        filter: true,
     },
 };
 

@@ -38,7 +38,7 @@ export default function Container({ curPath })
                 {!collectionName && 'Главная'}
                 {collectionName && <HeaderTag name={collectionName}/>}
             </h1>
-            { collectionName && <Search onChange={handleSearch}/>}
+            { collectionName && <Search onChange={handleSearch} nameCollection={collectionName}/>}
             { collectionName && <Form arValue={row} nameForm={collectionName}/> }
             { collectionName && <Table onChange={handleUpdateRow} nameTable={collectionName} query={query}/>}
             

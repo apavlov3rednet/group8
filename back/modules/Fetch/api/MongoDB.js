@@ -108,22 +108,47 @@ export default class MongoDB {
         let filter = options.filter ? options.filter : {};
 
         if(options.search && options.search.length > 2) {
-            let query = new RegExp(options.search, 'i');
-            filter = {
-                TITLE: { $regex : query }
+            let arLine = options.search.split(' ').join('|');
+            let query = new RegExp(arLine);
+            let xor = [];
+
+            for(let index in this.schema) {
+                let item = this.schema[index];
+
+                if(item.searchable) {
+                    let el = {};
+                    el[index] = { $regex : query, $options: 'i' };
+                    xor.push(el);
+                }
             }
 
-            // filter = {
-            //     $or: [
-            //         {TITLE: { $regex : query }},
-            //         {PARENT_COMPANY: { $regex : query }}
-            //     ]
-            // }
+            filter = {
+                $or: [...xor]
+            }
         }
 
-        console.log(filter);
+        if(options.sort) {
+            if(options.sort.max) {
+                options.sort.key = -1;
+                options.sort.name = options.sort.max;
+            }
 
-        let unPreparedData = await this.collection.find(filter).toArray();
+            if(options.sort.min) {
+                options.sort.key = 1;
+                options.sort.name = options.sort.min;
+            }
+        }
+
+        let unPreparedData;
+
+        if(options.sort && options.sort.key) {
+            let sort = {};
+            sort[options.sort.name] = options.sort.key;
+            unPreparedData = await this.collection.find().sort(sort).limit(1).toArray();
+        }
+        else {
+            unPreparedData = await this.collection.find(filter).toArray();
+        }
 
         let data = Controll.prepareData(unPreparedData, this.schema);
         let simId = {};

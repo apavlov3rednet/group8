@@ -227,7 +227,7 @@ export default function Form({nameForm, arValue}) {
     }
 
     return (
-        <form method='POST' action={url} onChange={checkRequired}>
+        <form className='editForm' method='POST' action={url} onChange={checkRequired}>
             { renderForm(schema, formValue) }
 
             <button disabled={disabled && disabled}>

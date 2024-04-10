@@ -15,7 +15,8 @@ const services = {
         default: 'none',
         loc: "Дата оказания",
         sort: true,
-        editable: true
+        editable: true,
+        filter: true
     },
     CARD: {
         type: 'DBRef',
@@ -53,11 +54,12 @@ const services = {
         loc: "Сумма",
         sort: true,
         editable: true,
-        step: null,
+        step: 10,
         readOnly: true,
         method: 'MULTIPLY',
         fields: [ 'PRICE', 'COUNT' ],
-        mask: '#COUNT# * #PRICE#'
+        mask: '#COUNT# * #PRICE#',
+        filter: true,
     },
 };
 

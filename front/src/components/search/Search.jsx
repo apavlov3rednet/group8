@@ -2,9 +2,15 @@
 import { useCallback, useEffect, useState } from "react";
 import config from "../../params/config.js";
 import './style.css';
+import DatePicker from "react-datepicker";
 
 export default function Search({ onChange, nameCollection }) {
     const [schema, setSchema] = useState({});
+    const [min, setMin] = useState(0);
+    const [max, setMax] = useState(0);
+    const [step, setStep] = useState(0);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(null);
 
     useEffect(
         () => {
@@ -22,15 +28,20 @@ export default function Search({ onChange, nameCollection }) {
                     }
 
                     if(element.filter && element.type === 'Number') {
-                        let min = await fetch(config.fullApi + nameCollection + '/?min=' + key);
-                        let minValue = await min.json();
+                        let minRequest = await fetch(config.fullApi + nameCollection + '/?min=' + key);
+                        let minValue = await minRequest.json();
 
-                        let max = await fetch(config.fullApi + nameCollection + '/?max=' + key);
-                        let maxValue = await max.json();
+                        let maxRequest = await fetch(config.fullApi + nameCollection + '/?max=' + key);
+                        let maxValue = await maxRequest.json();
+
                         answer[key].limits = {
                             min : minValue.data[0][key],
-                            max : maxValue.data[0][key]
+                            max : maxValue.data[0][key],
                         };
+                        
+                        setStep(parseInt(element.step));
+                        setMin(minValue.data[0][key]);
+                        setMax(minValue.data[0][key] + step);
                     }   
                 }
 
@@ -52,6 +63,60 @@ export default function Search({ onChange, nameCollection }) {
         overlay.classList.toggle('show');
     }
 
+    function changeValue(event) {
+        let field = event.target;
+        let parent = field.closest('label');
+        let key = field.list.id.split('_'); // [BUDGET, MIN/MAX]
+
+        if(key[1] === 'MIN') {
+            let obMax = parent.querySelector('input[list='+key[0]+'_MAX]');
+
+            if(obMax.value <= field.value) {
+                let maxValue = parseInt(field.value) + parseInt(step);
+
+                if(maxValue > parseInt(field.max)) {
+                    maxValue = parseInt(field.max);
+                }
+                setMax(maxValue);
+            }
+
+            if(field.value >= field.max) {
+                setMin(parseInt(field.value) - parseInt(step));
+            }
+            else {
+                setMin(field.value);
+            }
+        }
+
+        if(key[1] === 'MAX') {
+            let obMin = parent.querySelector('input[list='+key[0]+'_MIN]');
+
+            if(field.value <= obMin.value) {
+                let minValue = parseInt(field.value) - parseInt(step);
+
+                if(minValue < parseInt(obMin.min)) {
+                    setMin(obMin.min);
+                }
+
+                setMin(minValue);
+            }
+            
+            if(field.value > field.min) {
+                setMax(field.value);
+            }
+            else {
+                setMax(parseInt(field.value) + parseInt(step));
+            }
+            
+        }
+    }
+
+    function onChangeDates(dates) {
+        const [start, end] = dates;
+        setStartDate(start);
+        setEndDate(end);
+    };
+
     function renderFilter(data = {}) {
         let formElements = [];
         for(let i in data) {
@@ -63,6 +128,10 @@ export default function Search({ onChange, nameCollection }) {
                     case 'Number':
                         newRow.field = 'range';
                     break;
+
+                    case 'Date':
+                        newRow.field = 'daterange';
+                    break;
                 }
 
                 formElements.push(newRow);
@@ -73,42 +142,74 @@ export default function Search({ onChange, nameCollection }) {
             <>
                 {
                     formElements.map((item, index) => (
-                        <label key={index}> 
+                        <>
+                        {
+                            item.field === 'range' && <label key={index}> 
                             <span>{item.loc}</span>
                             <div className="rangeGroup">
-                            <input type={item.field} 
-                            max={item.limits.max}
-                            min={item.limits.min}
-                            step={item.type === 'Number' && item.step}
-                            list={item.field === 'range' && index}
-                            name={item.code + '[MIN]'}/>
+                                от: 
+                                <input type={item.field} 
+                                    max={item.limits.max}
+                                    min={item.limits.min}
+                                    defaultValue={min}
+                                    value={min}
+                                    step={item.type === 'Number' && item.step}
+                                    list={item.code + '_MIN'}
+                                    name={item.code + '[MIN]'}
+                                    onChange={changeValue}/>
 
-                            {
-                                item.field === 'range' && 
-                                <datalist id={index}>
-                                    <option value={item.limits.min} label={item.limits.min}></option>
-                                    <option value={item.limits.max} label={item.limits.max}></option>
-                                </datalist>
-                            }
+                                {
+                                    item.field === 'range' && 
+                                    <datalist id={item.code + '_MIN'}>
+                                        <option value={item.limits.min} label={item.limits.min}></option>
+                                        <option className='curValue' value={min} defaultValue={min} label={min}></option>
+                                        <option value={item.limits.max} label={item.limits.max}></option>
+                                    </datalist>
+                                }
                             </div>
 
                             <div className="rangeGroup">
-                            <input type={item.field} 
-                            max={item.limits.max}
-                            min={item.limits.min}
-                            step={item.type === 'Number' && item.step}
-                            list={item.field === 'range' && index}
-                            name={item.code + '[MAX]'}/>
+                                до: 
+                                <input type={item.field} 
+                                    max={item.limits.max}
+                                    min={item.limits.min}
+                                    defaultValue={max}
+                                    value={max}
+                                    step={item.type === 'Number' && item.step}
+                                    list={item.code + '_MAX'}
+                                    name={item.code + '[MAX]'}
+                                    onChange={changeValue}/>
 
-                            {
-                                item.field === 'range' && 
-                                <datalist id={index}>
-                                    <option value={item.limits.min} label={item.limits.min}></option>
-                                    <option value={item.limits.max} label={item.limits.max}></option>
-                                </datalist>
-                            }
+                                {
+                                    item.field === 'range' && 
+                                    <datalist id={item.code + '_MAX'}>
+                                        <option value={item.limits.min} label={item.limits.min}></option>
+                                        <option className='curValue' value={max}  defaultValue={max} label={max}></option>
+                                        <option value={item.limits.max} label={item.limits.max}></option>
+                                    </datalist>
+                                }
                             </div>
                         </label>
+                        }
+
+                        {
+                            item.field === 'daterange' && 
+                            <div>
+                                <span>{item.loc}</span>
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={onChangeDates}
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    selectsRange
+                                    inline
+                                />
+                                <input type='hidden' value={startDate}/>    
+                                <input type='hidden' value={endDate}/>                        
+                                </div>
+                            
+                        }
+                        </>
                     ))
                 }
             </>

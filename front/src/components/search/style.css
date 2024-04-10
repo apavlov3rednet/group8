@@ -38,7 +38,7 @@
 }
 
 .modal {
-    width:450px;
+    width:600px;
     height:600px;
     position:fixed;
     margin:auto;
@@ -104,7 +104,8 @@
 .modal label {
     text-align: left;
     margin:10px 20px;
-    display:block;
+    display:flex;
+    gap:15px;
 }
 
 datalist {
@@ -112,18 +113,20 @@ datalist {
     flex-direction: row;
     justify-content: space-between;
     font-size:10px;
-    width: 300;
+    width: 100%;
   }
-  
-  option {
-    padding: 0;
+
+  option.curValue {
+    font-size:12px;
+    font-weight: bold;
+    text-align: center;
   }
 
   input[type="range"] {
-    width: 300px;
-    margin: 0;
+    margin-bottom: 10px;
+    width:100%;
   }
 
   .rangeGroup {
-    width:300px;
+    width:33.33333%;
   }

@@ -10,19 +10,31 @@ export default function Table({nameTable, onChange, query = ''}) {
         sim: []
     });
 
-    console.log(query);
-
     const [loading, setLoading] = useState(false);
 
     const fetchTable = useCallback(async () => {
         setLoading(true);
+        let getReq = window.location.search;
         let urlRequest = config.fullApi + nameTable +'/';
 
         if(query != '') {
             urlRequest += '?q=' + query;
         }
 
-        const response = await fetch(urlRequest);
+        if(query == '' && getReq != '') {
+            urlRequest += getReq;
+        }
+
+        await getFetch(urlRequest);
+        setLoading(false);
+    }, [nameTable, onChange]);
+
+    useEffect(
+        () => {fetchTable()}, [fetchTable]
+    )
+
+    async function getFetch(url) {
+        const response = await fetch(url);
         const unPreparedData = await response.json();
         const data = {
             header: unPreparedData.head,
@@ -32,20 +44,18 @@ export default function Table({nameTable, onChange, query = ''}) {
         };
 
         setTable(data);
-        setLoading(false);
-    }, [nameTable, onChange]);
-
-    useEffect(
-        () => {fetchTable()}, [fetchTable]
-    )
+    }
 
     function getHeader(schema) {
         let header = [];
         for(let i in schema) {
+            let obHeader = schema[i];
+
+            obHeader.code = i;
             if(i === '_id')
                 header.push({loc: 'ID'});
             else
-                header.push(schema[i]);
+                header.push(obHeader);
         } 
 
         header.push('');
@@ -55,14 +65,48 @@ export default function Table({nameTable, onChange, query = ''}) {
                 {
                     header.map((item, index) => (
                         <th key={index} 
+                            data-code={item.code}
+                            onClick={setSort}
                             className={item.sort ? 'sortable' : null}>
                                 {item.loc}
-                                {item.sort ? ' ::' : null}
+                                <span></span>
                         </th>
                     ))
                 }
             </tr>
         )
+    }
+
+    async function setSort(event) {
+        let th = event.target;
+        let parentRow = th.closest('tr');
+        let allTh = parentRow.querySelectorAll('th');
+        let order = th.classList.contains('DESC') ? 'DESC' : 'ASC';
+        let code = event.target.dataset.code;
+        let url = config.fullApi + nameTable + '/?sort=' + code + '&order=' + order;
+
+        th.classList.add(order);
+
+        await getFetch(url);
+
+        if(order === 'ASC') {
+            th.classList.add('DESC');
+            th.classList.remove('ASC');
+        }
+        else {
+            th.classList.remove('DESC');
+            th.classList.add('ASC');
+        }
+
+        allTh.forEach(item => {
+            if(item.dataset.code != code) {
+                if(item.classList.contains('ASC'))
+                    th.classList.remove('ASC');
+
+                if(item.classList.contains('DESC'))
+                    th.classList.remove('DESC');
+            }
+        })
     }
 
     // function getRow(row, schema) {

@@ -13,6 +13,38 @@
     color: #fff;
 }
 
+.simple-table thead tr th.sortable {
+    cursor:pointer;
+}
+
+.simple-table thead tr th.sortable span {
+    position:relative;
+    display:inline-block;
+    width:20px;
+    height:20px;
+}
+
+.simple-table thead tr th.sortable span:after {
+    content: '';
+    position:absolute;
+    text-align:center;
+    width:20px;
+    height:20px;
+    top:0;
+    left:0;
+}
+
+.simple-table thead tr th.sortable.ASC span:after {
+    content: '>';
+    rotate: 90deg;
+    left:-4px;
+}
+
+.simple-table thead tr th.sortable.DESC span:after {
+    content: '>';
+    rotate: -90deg;
+}
+
 .simple-table tbody tr {
     transition: all .15s ease-in;
 }

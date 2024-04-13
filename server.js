@@ -26,7 +26,7 @@ const PORT = 8000;
 //     return resolve(__dirname, dir, `${page}.${ext}`);
 // };
 
-app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
+//app.use(morgan(':method :url :res[content-lenght] - :response-time ms'));
 
 app.use((req, res, next) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -45,8 +45,9 @@ app.get('/api/:CollectionName/', async (req, res) => {
     let options = {};
 
     if(req.query) {
+        options.filter = {};
+
         if(req.query.id) {
-            options.filter = {};
             options.filter._id = new ObjectId(req.query.id);
         }
 
@@ -58,6 +59,18 @@ app.get('/api/:CollectionName/', async (req, res) => {
             options.sort = {};
             options.sort.min = req.query.min ? req.query.min : 0;
             options.sort.max = req.query.max ? req.query.max : 900000000000;
+        }
+
+        if(req.query.sort && req.query.order) {
+            options.sort = {};
+            options.sort.field = req.query.sort;
+            options.sort.order = req.query.order;
+        }
+
+        if(req.query.filter === 'Y') {
+            for(let i in req.query) {
+                options.filter[i] = req.query[i];
+            }
         }
     }
 

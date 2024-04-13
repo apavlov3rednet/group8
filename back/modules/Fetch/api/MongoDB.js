@@ -131,11 +131,45 @@ export default class MongoDB {
             if(options.sort.max) {
                 options.sort.key = -1;
                 options.sort.name = options.sort.max;
+                options.sort.limit = 1;
             }
 
             if(options.sort.min) {
                 options.sort.key = 1;
                 options.sort.name = options.sort.min;
+                options.sort.limit = 1;
+            }
+
+            if(options.sort.field && options.sort.order) {
+                options.sort.key = (options.sort.order === 'ASC') ? 1 : -1;
+                options.sort.name = options.sort.field;
+                options.sort.limit = 100;
+            }
+        }
+
+        if(options.filter.filter === 'Y') {
+            filter = {};
+
+            for(let i in options.filter) {
+                let el = options.filter[i];
+                let from, to;
+
+                if(i === 'filter')
+                    continue;
+
+                switch(this.schema[i].type) {
+                    case "Number":
+                        from = parseInt(el.FROM);
+                        to = parseInt(el.TO);
+                    break;
+
+                    case 'Date':
+                        from = new Date(el.FROM);
+                        to = new Date(el.TO);
+                    break;
+                }
+
+                filter[i] = { $gte: from , $lte : to}
             }
         }
 
@@ -144,7 +178,7 @@ export default class MongoDB {
         if(options.sort && options.sort.key) {
             let sort = {};
             sort[options.sort.name] = options.sort.key;
-            unPreparedData = await this.collection.find().sort(sort).limit(1).toArray();
+            unPreparedData = await this.collection.find().sort(sort).limit(options.sort.limit).toArray();
         }
         else {
             unPreparedData = await this.collection.find(filter).toArray();

@@ -65,7 +65,7 @@ export default function Search({ onChange, nameCollection }) {
 
     function changeValue(event) {
         let field = event.target;
-        let parent = field.closest('label');
+        let parent = field.closest('.label');
         let key = field.list.id.split('_'); // [BUDGET, MIN/MAX]
 
         if(key[1] === 'MIN') {
@@ -117,6 +117,13 @@ export default function Search({ onChange, nameCollection }) {
         setEndDate(end);
     };
 
+    function clearFilter(event) {
+        event.preventDefault();
+        let curPage = window.location;
+
+        document.location.href = curPage.origin + curPage.pathname;
+    }
+
     function renderFilter(data = {}) {
         let formElements = [];
         for(let i in data) {
@@ -144,7 +151,7 @@ export default function Search({ onChange, nameCollection }) {
                     formElements.map((item, index) => (
                         <>
                         {
-                            item.field === 'range' && <label key={index}> 
+                            item.field === 'range' && <div className='label' key={index}> 
                             <span>{item.loc}</span>
                             <div className="rangeGroup">
                                 от: 
@@ -155,15 +162,15 @@ export default function Search({ onChange, nameCollection }) {
                                     value={min}
                                     step={item.type === 'Number' && item.step}
                                     list={item.code + '_MIN'}
-                                    name={item.code + '[MIN]'}
+                                    name={item.code + '[FROM]'}
                                     onChange={changeValue}/>
 
                                 {
                                     item.field === 'range' && 
                                     <datalist id={item.code + '_MIN'}>
-                                        <option value={item.limits.min} label={item.limits.min}></option>
-                                        <option className='curValue' value={min} defaultValue={min} label={min}></option>
-                                        <option value={item.limits.max} label={item.limits.max}></option>
+                                        <option key='1' value={item.limits.min} label={item.limits.min}></option>
+                                        <option key='2' className='curValue' value={min} defaultValue={min} label={min}></option>
+                                        <option key='3' value={item.limits.max} label={item.limits.max}></option>
                                     </datalist>
                                 }
                             </div>
@@ -177,24 +184,24 @@ export default function Search({ onChange, nameCollection }) {
                                     value={max}
                                     step={item.type === 'Number' && item.step}
                                     list={item.code + '_MAX'}
-                                    name={item.code + '[MAX]'}
+                                    name={item.code + '[TO]'}
                                     onChange={changeValue}/>
 
                                 {
                                     item.field === 'range' && 
                                     <datalist id={item.code + '_MAX'}>
-                                        <option value={item.limits.min} label={item.limits.min}></option>
-                                        <option className='curValue' value={max}  defaultValue={max} label={max}></option>
-                                        <option value={item.limits.max} label={item.limits.max}></option>
+                                        <option key='1' value={item.limits.min} label={item.limits.min}></option>
+                                        <option key='2' className='curValue' value={max}  defaultValue={max} label={max}></option>
+                                        <option key='3' value={item.limits.max} label={item.limits.max}></option>
                                     </datalist>
                                 }
                             </div>
-                        </label>
+                        </div>
                         }
 
                         {
                             item.field === 'daterange' && 
-                            <div>
+                            <div className='label' key={index}>
                                 <span>{item.loc}</span>
                                 <DatePicker
                                     selected={startDate}
@@ -204,8 +211,8 @@ export default function Search({ onChange, nameCollection }) {
                                     selectsRange
                                     inline
                                 />
-                                <input type='hidden' value={startDate}/>    
-                                <input type='hidden' value={endDate}/>                        
+                                <input type='hidden' name={item.code + '[FROM]'} defaultValue={startDate}/>    
+                                <input type='hidden' name={item.code + '[TO]'} defaultValue={endDate}/>                        
                                 </div>
                             
                         }
@@ -230,6 +237,12 @@ export default function Search({ onChange, nameCollection }) {
             <div className="modal-head">Фильтр <button onClick={toggleModal}></button></div>
             <form method='GET' action=''>
                 {renderFilter(schema)}
+
+                <input type="hidden" name='filter' value='Y' />
+                <div className='buttons'>
+                    <button>Фильтровать</button>
+                    <button onClick={clearFilter}>Сбросить фильтр</button>
+                </div>
             </form>
         </div>
         <div className="overlay" onClick={toggleModal}></div>

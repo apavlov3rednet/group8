@@ -41,6 +41,8 @@ app.use(express.urlencoded({extended: true}));
 
 //GET requests
 app.get('/api/:CollectionName/', async (req, res) => {
+
+    console.log('true', req.params.CollectionName);
     let mdb = new Fetch.MongoDB(req.params.CollectionName.toLowerCase());
     let options = {};
 

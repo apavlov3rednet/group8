@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import config from "../../params/config";
-import { CChart } from '@coreui/react-chartjs'
+import { CChart } from '@coreui/react-chartjs';
 import '../table/style.css';
 
 export default function Index() {

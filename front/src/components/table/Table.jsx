@@ -98,15 +98,15 @@ export default function Table({nameTable, onChange, query = ''}) {
             th.classList.add('ASC');
         }
 
-        allTh.forEach(item => {
-            if(item.dataset.code != code) {
-                if(item.classList.contains('ASC'))
-                    th.classList.remove('ASC');
+        // allTh.forEach(item => {
+        //     if(item.dataset.code != code) {
+        //         if(item.classList.contains('ASC'))
+        //             th.classList.remove('ASC');
 
-                if(item.classList.contains('DESC'))
-                    th.classList.remove('DESC');
-            }
-        })
+        //         if(item.classList.contains('DESC'))
+        //             th.classList.remove('DESC');
+        //     }
+        // });
     }
 
     // function getRow(row, schema) {

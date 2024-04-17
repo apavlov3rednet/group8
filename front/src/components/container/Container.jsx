@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Form from "../form/Form.jsx";
-import Table from "../table/Table.jsx";
+import Table from "../table/Table.jsx"; 
 import Index from '../index/Index.jsx';
-import HeaderTag from "../headertag/HeaderTag.jsx";
+import HeaderTag from "../headertag/HeaderTag.jsx"; 
 import Search from "../search/Search.jsx";
 
 export default function Container({ curPath }) 
